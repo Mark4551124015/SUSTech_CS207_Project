@@ -46,7 +46,7 @@ module Car_whole_process(
     //从左往右，分别代表离合开关、油门开关、刹车开关、倒档开关，1代表开关打开，0代表开关关闭。
     wire[3:0] buttonTotal = {powerButton,modeButton,leftButton,rightButton};//按键总状态
     //从左往右，第一位代表电源按键，二位代表驾驶模式选择按键，三四位代表左右转按键。
-//    wire state = {powerState,drivingMode,carState,reverseShow,turnShow};//汽车总状态 
+    //wire state = {powerState,drivingMode,carState,reverseShow,turnShow};//汽车总状态 
     //从左往右，第一位代表电源状态，二三位代表驾驶模式状态， 四五位代表汽车状态，六位代表汽车前后行驶状态，七八位代表汽车左右转向状态
     reg[7:0] state;
     parameter   
@@ -89,12 +89,12 @@ begin
     else if(switchTotal==4'b0XX1&state[2]==0|switchTotal==4'b0XX0&state[2]==1|buttonTotal==4'b1XXX)state<=S0;//汽车状态变成S0（poweroff）的全部情况
     else state<=S3;
     S10:
-    if(buttonTotal==4'b1XXX)state<=S0;
-    else if(buttonTotal == 4'b01XX)state<=S20;
-    else state<=S10;
+    if(buttonTotal==4'b1XXX)state<=S0;          //按电源按钮关机
+    else if(buttonTotal == 4'b01XX)state<=S20;  //按切换状态按钮切换状态
+    else state<=S10;                            //其他不变
     S20:
-    if(buttonTotal==4'b1XXX)state<=S0;
-    else if(buttonTotal == 4'b01XX)state<=S1;
+    if(buttonTotal==4'b1XXX)state<=S0;          //按电源按钮关机
+    else if(buttonTotal == 4'b01XX)state<=S1;   //按切换状态按钮切换状态
     else state<=S20;
     endcase
 end
