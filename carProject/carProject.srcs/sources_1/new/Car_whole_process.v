@@ -47,10 +47,8 @@ module Car_whole_process(
     parameter   
     S0 = 8'b00000000,   //关机状态
     S1 = 8'b110XXXXX,   //开机
-    S2 = 
     
-    
-always @(posedge sys_clk,negedge rst) 
+always @(posedge sys_clk, negedge rst) 
 begin
         if(rst)
             carStateTotal <= 8'b10000000; ;
