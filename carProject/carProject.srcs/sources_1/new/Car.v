@@ -25,14 +25,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module Car();
-    clk_module mainclk(clock);
-
-
 
 
     Car_whole_process state();
     moving_module mm();
-    light_module light();
+    light_module lm();
+
 
 endmodule
 

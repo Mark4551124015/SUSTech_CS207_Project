@@ -64,18 +64,18 @@ begin
                 end
             S1:begin
                 Out_1;          //Êä³ö
-                if(condition3)       FSM<= S3;//×´Ì¬×ªÒÆ
-                else if (condition4) FSM <=S4; 
+                if(condition3)        FSM<= S3;//×´Ì¬×ªÒÆ
+                else if (condition4)  FSM <=S4; 
                 ¡­
                 end
                 ¡­¡­
             default: begin
                 Out_0;          //Êä³ö
-                if(condition0) FSM<= S0;//×´Ì¬×ªÒÆ
-                       end
-            endcase
+                if(condition0)          FSM<= S0;//×´Ì¬×ªÒÆ
             end
+            endcase
         end
+end
 
     
     

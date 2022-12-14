@@ -44,7 +44,7 @@ module moving_module(input [7:0] state, [3:0] switchTotal, [3:0] buttonTotal, ou
                 else if (throttle & reverse) begin
                     backward <= 1;
                 end else begin
-                    forward <= 0;
+                    forward    <= 0;
                     backward <= 0;
                 end
 
@@ -59,24 +59,26 @@ module moving_module(input [7:0] state, [3:0] switchTotal, [3:0] buttonTotal, ou
                     right   <= 0;
                 end
             end
-            
-            manul_moving_backward: begin
-                case (switchTotal) 
-
-
-
-
-
-                endcase
-
+            manul_non_staring: begin
+                if (leftButton & ~rightButton) begin
+                    left    <= 1;
+                    right   <= 0;
+                end else if (~leftButton & rightButton) begin
+                    left    <= 0;
+                    right   <= 1;
+                end else begin
+                    left    <= 0;
+                    right   <= 0;
+                end
             end
-            default: 
+            default: begin
+                forward     <= 0;
+                backward    <= 0;
+                left        <= 0;
+                right       <= 0;
+            end
         endcase
     end
-
-    
-
-
 endmodule
 
 
