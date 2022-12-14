@@ -39,45 +39,63 @@ module Car_whole_process(
     output breakShow,           //刹车显示灯        LED灯D2_5
     output reverseShow,         //倒挡显示灯        LED灯D2_4
     output[1:0] turnShow,       //转向显示灯        LED灯D1_5、LED灯D1_6
-    output[6:0] JourneyShow     //行程显示灯        seg7(不知道如何表示)
+    output[6:0] JourneyShow,     //行程显示灯        seg7(不知道如何表示)
+    output[7:0] state           //状态机
     );
     wire[3:0] switchTotal = {clutch,throttle,break,reverse};//开关总状态
+    //从左往右，分别代表离合开关、油门开关、刹车开关、倒档开关，1代表开关打开，0代表开关关闭。
     wire[3:0] buttonTotal = {powerButton,modeButton,leftButton,rightButton};//按键总状态
-    wire[7:0] carStateTotal = {powerState,drivingMode,carState,reverseShow,turnShow};//汽车总状态
+    //从左往右，第一位代表电源按键，二位代表驾驶模式选择按键，三四位代表左右转按键。
+//    wire state = {powerState,drivingMode,carState,reverseShow,turnShow};//汽车总状态 
+    //从左往右，第一位代表电源状态，二三位代表驾驶模式状态， 四五位代表汽车状态，六位代表汽车前后行驶状态，七八位代表汽车左右转向状态
+    reg[7:0] state;
     parameter   
-    S0 = 8'b00000000,   //关机状态
-    S1 = 8'b110XXXXX,   //开机
-    S2 = 
-    
+    S0 = 8'b0XXXXXXX,   //关机状态 该状态下除检测到的电源按钮输入外的所有检测到的输入无效
+    S1 = 8'b11001XXX,   //开机默认模式 手动驾驶模式未启动状态为默认状态 开机&手动&non-starting
+    S2 = 8'b11010XXX,   //开机&手动&starting
+    S3 = 8'b11011XXX,   //开机&手动&moving,
+    S10 = 8'b101XXXXX,   //开机&半自动
+    S20 = 8'b111XXXXX;   //开机&自动
     
 always @(posedge sys_clk,negedge rst) 
 begin
-        if(rst)
-            carStateTotal <= 8'b10000000; ;
-        else 
-        begin
-            case(FSM)
-            S0:
-            begin
-                Out_0;          //输出
-                if(condition1)        FSM<= S1;//状态转移
-                else if (condition2)  FSM<= S2;//状态转移
-                …
-                end
-            S1:begin
-                Out_1;          //输出
-                if(condition3)       FSM<= S3;//状态转移
-                else if (condition4) FSM <=S4; 
-                …
-                end
-                ……
-            default: begin
-                Out_0;          //输出
-                if(condition0) FSM<= S0;//状态转移
-                       end
-            endcase
-            end
-        end
+    if(~rst)
+    state<=S0;
+    else
+    case(state)
+    S0:
+    if(powerButton) state<=S1;//这里没有写完，应该用clk判断
+    else state<=S0;
+    S1: //开机&手动&non-starting
+    if(switchTotal == 4'b01XX|buttonTotal == 4'b1XXX) state<=S0;    //开关总状态01XX/按钮总状态1XXX  -->  汽车总状态0XXXXXXX
+    else if(switchTotal==4'b110X)state<=S2;                         //开关总状态110X  -->  汽车总状态11010XXX
+    else if(buttonTotal==4'b01XX)state<=S10;                        //按钮总状态01XX  -->  汽车总状态101XXXXX
+    else state<=S1;                                                 //其他情况不变
+    S2:
+    if(switchTotal == 4'b010X) state<=S3;   //开关总状态010X  -->  汽车总状态11011XXX
+    else if(switchTotal==4'bXX1X)state<=S1; //开关总状态XX1X  -->  汽车总状态11001XXX
+    else if(~state[2]==switchTotal[0]&switchTotal==4'b1XXX)begin 
+    state[2] = ~state[2];
+    state<=S2;
+    end//倒挡开关切换
+    else if(buttonTotal == 4'b1XXX)state<=0;//按钮总状态1XXX  -->  汽车总状态0XXXXXXX
+    else state<=S2;//其他情况不变
+    S3:
+    if((switchTotal == 4'b0000&state[2]==0)|(switchTotal==4'b1XX0&state[2]==0)|
+    (switchTotal==4'b0001&state[2]==1)|(switchTotal==4'b1XX1&state[2]==1)) state<=S2;   //汽车状态变成S2（starting）的全部情况
+    else if(switchTotal==4'b0X1X&state[2]==0|switchTotal==4'b0X1X&state[2]==1)state<=S1;//汽车状态变成S1（non-starting）的全部情况
+    else if(switchTotal==4'b0XX1&state[2]==0|switchTotal==4'b0XX0&state[2]==1|buttonTotal==4'b1XXX)state<=S0;//汽车状态变成S0（poweroff）的全部情况
+    else state<=S3;
+    S10:
+    if(buttonTotal==4'b1XXX)state<=S0;
+    else if(buttonTotal == 4'b01XX)state<=S20;
+    else state<=S10;
+    S20:
+    if(buttonTotal==4'b1XXX)state<=S0;
+    else if(buttonTotal == 4'b01XX)state<=S1;
+    else state<=S20;
+    endcase
+end
 
     
     
