@@ -50,14 +50,16 @@ module Car_whole_process(
     //从左往右，第一位代表电源状态，二三位代表驾驶模式状态， 四五位代表汽车状态，六位代表汽车前后行驶状态，七八位代表汽车左右转向状态
     reg[7:0] state;
     parameter   
+
     S0 = 8'b0XXXXXXX,   //关机状态 该状态下除检测到的电源按钮输入外的所有检测到的输入无效
     S1 = 8'b11001XXX,   //开机默认模式 手动驾驶模式未启动状态为默认状态 开机&手动&non-starting
     S2 = 8'b11010XXX,   //开机&手动&starting
     S3 = 8'b11011XXX,   //开机&手动&moving,
     S10 = 8'b101XXXXX,   //开机&半自动
     S20 = 8'b111XXXXX;   //开机&自动
+
     
-always @(posedge sys_clk,negedge rst) 
+always @(posedge sys_clk, negedge rst) 
 begin
     if(~rst)
     state<=S0;

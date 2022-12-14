@@ -3,7 +3,7 @@
 <!--The data in this file is primarily intended for consumption by Xilinx tools.
 The structure and the elements are likely to change over the next few releases.
 This means code written to parse this file will need to be revisited each subsequent release.-->
-<application name="pa" timeStamp="Wed Dec 14 21:14:23 2022">
+<application name="pa" timeStamp="Wed Dec 14 21:19:39 2022">
 <section name="Project Information" visible="false">
 <property name="ProjectID" value="ce3e59f0bff3496f88182ceff9d4ac4a" type="ProjectID"/>
 <property name="ProjectIteration" value="1" type="ProjectIteration"/>
@@ -33,7 +33,7 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="BaseDialog_OK" value="5" type="GuiHandlerData"/>
 <property name="ConstraintsChooserPanel_ADD_FILES" value="1" type="GuiHandlerData"/>
 <property name="CreateSrcFileDialog_FILE_NAME" value="2" type="GuiHandlerData"/>
-<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="48" type="GuiHandlerData"/>
+<property name="FileSetPanel_FILE_SET_PANEL_TREE" value="53" type="GuiHandlerData"/>
 <property name="FlowNavigatorTreePanel_FLOW_NAVIGATOR_TREE" value="8" type="GuiHandlerData"/>
 <property name="FlowNavigatorView_COLLAPSE_NEXT_LEVEL" value="1" type="GuiHandlerData"/>
 <property name="GettingStartedView_CREATE_NEW_PROJECT" value="1" type="GuiHandlerData"/>
@@ -49,6 +49,7 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="PACommandNames_CLOSE_PROJECT" value="1" type="GuiHandlerData"/>
 <property name="PACommandNames_FILESET_WINDOW" value="1" type="GuiHandlerData"/>
 <property name="PACommandNames_TOGGLE_VIEW_NAV" value="1" type="GuiHandlerData"/>
+<property name="PAViews_CODE" value="1" type="GuiHandlerData"/>
 <property name="PAViews_PROJECT_SUMMARY" value="1" type="GuiHandlerData"/>
 <property name="PartChooser_FAMILY_CHOOSER" value="1" type="GuiHandlerData"/>
 <property name="PartChooser_PARTS" value="1" type="GuiHandlerData"/>
@@ -56,16 +57,16 @@ This means code written to parse this file will need to be revisited each subseq
 <property name="PartChooser_PART_SPEED_CHOOSER" value="1" type="GuiHandlerData"/>
 <property name="PartChooser_PRODUCT_CHOOSER" value="1" type="GuiHandlerData"/>
 <property name="ProjectNameChooser_PROJECT_NAME" value="1" type="GuiHandlerData"/>
-<property name="RDICommands_SAVE_FILE" value="4" type="GuiHandlerData"/>
+<property name="RDICommands_SAVE_FILE" value="5" type="GuiHandlerData"/>
 <property name="SrcChooserPanel_ADD_DIRECTORIES" value="1" type="GuiHandlerData"/>
 <property name="SrcChooserPanel_CREATE_FILE" value="2" type="GuiHandlerData"/>
 <property name="SrcChooserTable_SRC_CHOOSER_TABLE" value="6" type="GuiHandlerData"/>
 <property name="SrcMenu_OPEN_SELECTED_SOURCE_FILES" value="1" type="GuiHandlerData"/>
 </item>
 <item name="Other">
-<property name="GuiMode" value="25" type="GuiMode"/>
+<property name="GuiMode" value="26" type="GuiMode"/>
 <property name="BatchMode" value="0" type="BatchMode"/>
-<property name="TclMode" value="22" type="TclMode"/>
+<property name="TclMode" value="23" type="TclMode"/>
 </item>
 </section>
 </application>
