@@ -24,18 +24,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module moving_module(input [7:0] state, [3:0] switchTotal, [3:0] buttonTotal, output reg forward, reg backward, reg left, reg right);
-    parameter manul_non_staring  = 8'b11001;
-    parameter manul_starting = 8'b11010;
-    parameter manul_moving = 8'b11011;
-    reg clutch <= switchTotal[3];
-    reg throttle <= switchTotal[2];
-    reg brake <= switchTotal[1];
-    reg reverse <= switchTotal[0];
-    reg leftButton <= buttonTotal[1];
-    reg rightButton <= buttonTotal[0];
-
+module moving_module(input [5:0] state, [3:0] switchTotal, [3:0] buttonTotal, output reg forward, reg backward, reg left, reg right);
+    parameter manul_non_staring  = 6'b11001X;
+    parameter manul_starting = 6'b11010X;
+    parameter manul_moving = 6'b11011X;
+    reg clutch,throttle,brake,reverse,leftButton,rightButton;
     always@(*) begin
+        clutch <= switchTotal[3];
+        throttle <= switchTotal[2];
+        brake <= switchTotal[1];
+        reverse <= switchTotal[0];
+        leftButton <= buttonTotal[1];
+        rightButton <= buttonTotal[0];
         case (state)
             manul_moving: begin
                 if (throttle & ~reverse) begin
