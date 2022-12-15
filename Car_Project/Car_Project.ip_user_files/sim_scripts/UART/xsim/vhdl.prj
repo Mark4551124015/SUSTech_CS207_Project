@@ -1,0 +1,4 @@
+vhdl xil_defaultlib  \
+"../../../../../carProject/carProject.srcs/sources_1/ip/UART/sim/UART.vhd" \
+
+nosort
