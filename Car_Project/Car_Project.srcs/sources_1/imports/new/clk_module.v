@@ -29,17 +29,17 @@ module clk_module(input clk, reset, enable, output reg clk_out);
     reg [31:0] cnt;
     always@(posedge clk) begin
         if (reset) begin
-            cnt             <= 0;
-            clk_out         <= 0;
+            clk_out             = 0;
+            cnt                 = 0;
         end
         else begin
             if (enable) begin
                 if (cnt == (period >> 1) -1) begin
-                    clk_out     <= ~clk_out;
-                    cnt         <= 0;
+                    clk_out     = ~clk_out;
+                    cnt         = 0;
                 end
                 else begin 
-                    cnt         <= cnt + 1;
+                    cnt         = cnt + 1;
                 end    
             end
         end
