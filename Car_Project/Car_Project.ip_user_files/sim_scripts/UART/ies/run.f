@@ -14,6 +14,6 @@
   "../../../ipstatic/hdl/axi_uartlite_v2_0_vh_rfs.vhd" \
 -endlib
 -makelib ies_lib/xil_defaultlib \
-  "../../../../../carProject/carProject.srcs/sources_1/ip/UART/sim/UART.vhd" \
+  "../../../../Car_Project.srcs/sources_1/ip/UART/sim/UART.vhd" \
 -endlib
 

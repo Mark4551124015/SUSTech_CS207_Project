@@ -31,6 +31,6 @@ vcom -work axi_uartlite_v2_0_19 -93 \
 "../../../ipstatic/hdl/axi_uartlite_v2_0_vh_rfs.vhd" \
 
 vcom -work xil_defaultlib -93 \
-"../../../../../carProject/carProject.srcs/sources_1/ip/UART/sim/UART.vhd" \
+"../../../../Car_Project.srcs/sources_1/ip/UART/sim/UART.vhd" \
 
 
