@@ -25,53 +25,53 @@ module state_machine(
     input rst,
     input [3:0] switch_total,
     input [3:0] button_total,
-    output [5:0] state
+    output reg [5:0] state
     );
-
+    wire power_button;
     parameter
-        S0 = 6'b0XXXXX,   //å…³æœºçŠ¶æ€ è¯¥çŠ¶æ€ä¸‹é™¤æ£€æµ‹åˆ°çš„ç”µæºæŒ‰é’®è¾“å…¥å¤–çš„æ‰€æœ‰æ£€æµ‹åˆ°çš„è¾“å…¥æ— æ•ˆ
-        S1 = 6'b11001X,   //å¼€æœºé»˜è®¤æ¨¡å¼ æ‰‹åŠ¨é©¾é©¶æ¨¡å¼æœªå¯åŠ¨çŠ¶æ€ä¸ºé»˜è®¤çŠ¶æ€ å¼€æœº&æ‰‹åŠ¨&non-starting
-        S2 = 6'b11010X,   //å¼€æœº&æ‰‹åŠ¨&starting
-        S3 = 6'b11011X,   //å¼€æœº&æ‰‹åŠ¨&moving,
-        S10 = 6'b101XXX,   //å¼€æœº&åŠè‡ªåŠ¨
-        S20 = 6'b111XXX;   //å¼€æœº&è‡ªåŠ¨
-always @(posedge clk, rst)
+        S0 = 6'b0XXXXX,   //¹Ø»ú×´Ì¬ ¸Ã×´Ì¬ÏÂ³ı¼ì²âµ½µÄµçÔ´°´Å¥ÊäÈëÍâµÄËùÓĞ¼ì²âµ½µÄÊäÈëÎŞĞ§
+        S1 = 6'b11001X,   //¿ª»úÄ¬ÈÏÄ£Ê½ ÊÖ¶¯¼İÊ»Ä£Ê½Î´Æô¶¯×´Ì¬ÎªÄ¬ÈÏ×´Ì¬ ¿ª»ú&ÊÖ¶¯&non-starting
+        S2 = 6'b11010X,   //¿ª»ú&ÊÖ¶¯&starting
+        S3 = 6'b11011X,   //¿ª»ú&ÊÖ¶¯&moving,
+        S10 = 6'b101XXX,   //¿ª»ú&°ë×Ô¶¯
+        S20 = 6'b111XXX;   //¿ª»ú&×Ô¶¯
+always @(posedge clk)
 begin
     if(~rst)
         state<=S0;
     else
         case(state)
-            S0://è¿™é‡Œæ²¡æœ‰å†™å®Œï¼Œåº”è¯¥ç”¨clkåˆ¤æ–­
-                if(powerButton) state<=S1;
+            S0://ÕâÀïÃ»ÓĞĞ´Íê£¬Ó¦¸ÃÓÃclkÅĞ¶Ï
+                if(power_button) state<=S1;
                 else state<=S0;
-            S1: //å¼€æœº&æ‰‹åŠ¨&non-starting
-                if(switch_total == 4'b01XX|button_total == 4'b1XXX) state<=S0;    //å¼€å…³æ€»çŠ¶æ€01XX/æŒ‰é’®æ€»çŠ¶æ€1XXX  -->  æ±½è½¦æ€»çŠ¶æ€0XXXXXXX
-                else if(switch_total==4'b110X) state<=S2;                         //å¼€å…³æ€»çŠ¶æ€110X  -->  æ±½è½¦æ€»çŠ¶æ€11010XXX
-                else if(button_total==4'b01XX) state<=S10;                        //æŒ‰é’®æ€»çŠ¶æ€01XX  -->  æ±½è½¦æ€»çŠ¶æ€101XXXXX
-                else state<=S1;                                                 //å…¶ä»–æƒ…å†µä¸å˜
+            S1: //¿ª»ú&ÊÖ¶¯&non-starting
+                if(switch_total == 4'b01XX|button_total == 4'b1XXX) state<=S0;    //¿ª¹Ø×Ü×´Ì¬01XX/°´Å¥×Ü×´Ì¬1XXX  -->  Æû³µ×Ü×´Ì¬0XXXXXXX
+                else if(switch_total==4'b110X) state<=S2;                         //¿ª¹Ø×Ü×´Ì¬110X  -->  Æû³µ×Ü×´Ì¬11010XXX
+                else if(button_total==4'b01XX) state<=S10;                        //°´Å¥×Ü×´Ì¬01XX  -->  Æû³µ×Ü×´Ì¬101XXXXX
+                else state<=S1;                                                 //ÆäËûÇé¿ö²»±ä
             S2:
-                if(switch_total == 4'b010X) state<=S3;   //å¼€å…³æ€»çŠ¶æ€010X  -->  æ±½è½¦æ€»çŠ¶æ€11011XXX
-                else if(switch_total==4'bXX1X)state<=S1; //å¼€å…³æ€»çŠ¶æ€XX1X  -->  æ±½è½¦æ€»çŠ¶æ€11001XXX
+                if(switch_total == 4'b010X) state<=S3;   //¿ª¹Ø×Ü×´Ì¬010X  -->  Æû³µ×Ü×´Ì¬11011XXX
+                else if(switch_total==4'bXX1X)state<=S1; //¿ª¹Ø×Ü×´Ì¬XX1X  -->  Æû³µ×Ü×´Ì¬11001XXX
                 else if(~state[0]==switch_total[0]&switch_total==4'b1XXX)
                     begin 
                     state[0] = ~state[0];
                     state<=S2;
-                    end//å€’æŒ¡å¼€å…³åˆ‡æ¢
-                else if(button_total == 4'b1XXX)state<=0;//æŒ‰é’®æ€»çŠ¶æ€1XXX  -->  æ±½è½¦æ€»çŠ¶æ€0XXXXXXX
-                else state<=S2;//å…¶ä»–æƒ…å†µä¸å˜
+                    end//µ¹µ²¿ª¹ØÇĞ»»
+                else if(button_total == 4'b1XXX)state<=0;//°´Å¥×Ü×´Ì¬1XXX  -->  Æû³µ×Ü×´Ì¬0XXXXXXX
+                else state<=S2;//ÆäËûÇé¿ö²»±ä
             S3:
                 if((switch_total == 4'b0000&state[0]==0)|(switch_total==4'b1XX0&state[0]==0)|
-                (switch_total==4'b0001&state[0]==1)|(switch_total==4'b1XX1&state[0]==1)) state<=S2;   //æ±½è½¦çŠ¶æ€å˜æˆS2ï¼ˆstartingï¼‰çš„å…¨éƒ¨æƒ…å†µ
-                else if(switch_total==4'b0X1X&state[0]==0|switch_total==4'b0X1X&state[0]==1)state<=S1;//æ±½è½¦çŠ¶æ€å˜æˆS1ï¼ˆnon-startingï¼‰çš„å…¨éƒ¨æƒ…å†µ
-                else if(switch_total==4'b0XX1&state[0]==0|switch_total==4'b0XX0&state[0]==1|button_total==4'b1XXX)state<=S0;//æ±½è½¦çŠ¶æ€å˜æˆS0ï¼ˆpoweroffï¼‰çš„å…¨éƒ¨æƒ…å†µ
+                (switch_total==4'b0001&state[0]==1)|(switch_total==4'b1XX1&state[0]==1)) state<=S2;   //Æû³µ×´Ì¬±ä³ÉS2£¨starting£©µÄÈ«²¿Çé¿ö
+                else if(switch_total==4'b0X1X&state[0]==0|switch_total==4'b0X1X&state[0]==1)state<=S1;//Æû³µ×´Ì¬±ä³ÉS1£¨non-starting£©µÄÈ«²¿Çé¿ö
+                else if(switch_total==4'b0XX1&state[0]==0|switch_total==4'b0XX0&state[0]==1|button_total==4'b1XXX)state<=S0;//Æû³µ×´Ì¬±ä³ÉS0£¨poweroff£©µÄÈ«²¿Çé¿ö
                 else state<=S3;
             S10:
-                if(button_total==4'b1XXX)state<=S0;          //æŒ‰ç”µæºæŒ‰é’®å…³æœº
-                else if(button_total == 4'b01XX)state<=S20;  //æŒ‰åˆ‡æ¢çŠ¶æ€æŒ‰é’®åˆ‡æ¢çŠ¶æ€
-                else state<=S10;                            //å…¶ä»–ä¸å˜
+                if(button_total==4'b1XXX)state<=S0;          //°´µçÔ´°´Å¥¹Ø»ú
+                else if(button_total == 4'b01XX)state<=S20;  //°´ÇĞ»»×´Ì¬°´Å¥ÇĞ»»×´Ì¬
+                else state<=S10;                            //ÆäËû²»±ä
             S20:
-                if(button_total==4'b1XXX)state<=S0;          //æŒ‰ç”µæºæŒ‰é’®å…³æœº
-                else if(button_total == 4'b01XX)state<=S1;   //æŒ‰åˆ‡æ¢çŠ¶æ€æŒ‰é’®åˆ‡æ¢çŠ¶æ€
+                if(button_total==4'b1XXX)state<=S0;          //°´µçÔ´°´Å¥¹Ø»ú
+                else if(button_total == 4'b01XX)state<=S1;   //°´ÇĞ»»×´Ì¬°´Å¥ÇĞ»»×´Ì¬
                 else state<=S20;
     endcase
 end

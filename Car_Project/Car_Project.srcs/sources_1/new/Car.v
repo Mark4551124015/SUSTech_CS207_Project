@@ -19,88 +19,86 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
 module car(
     input sys_clk, //bind to P17 pin (100MHz system clock)
     input rx, //bind to N5 pin
     output tx, //bind to T4 pin
     input rst, //reset button
-    
-    // æŒ‰é”®
-    input power_button,          //ç”µæºå¼€å…³æŒ‰é’®       æŒ‰é”®S2
-    input mode_button,           //æ¨¡å¼åˆ‡æ¢æŒ‰é’®       æŒ‰é”®S4
-    input left_button,           //å·¦è½¬æŒ‰é’®           æŒ‰é”®S3
-    input right_button,          //å³è½¬æŒ‰é’®           æŒ‰é”®S0
-    // å¼€å…³
-    input clutch,                //ç¦»åˆå¼€å…³           SW7
-    input throttle,              //æ²¹é—¨å¼€å…³           SW6
-    input brake,                 //åˆ¹è½¦å¼€å…³           SW5
-    input reverse,               //å€’æŒ¡å¼€å…³           SW4
-    // æ˜¾ç¤ºç¯
-    output power_state,           //ç”µæºçŠ¶æ€æ˜¾ç¤ºç¯      LEDç¯D1_0
-    output[1:0] driving_mode,     //é©¾é©¶æ¨¡å¼æ˜¾ç¤ºç¯      LEDç¯D1_1ã€D1_2
-    output[1:0] car_state,        //æ±½è½¦çŠ¶æ€æ˜¾ç¤ºç¯      LEDç¯D1_3ã€D1_4
-    output clutch_show,           //ç¦»åˆæ˜¾ç¤ºç¯         LEDç¯D2_7
-    output throttle_show,         //æ²¹é—¨æ˜¾ç¤ºç¯         LEDç¯D2_6
-    output break_show,            //åˆ¹è½¦æ˜¾ç¤ºç¯         LEDç¯D2_5
-    output reverse_show,          //å€’æŒ¡æ˜¾ç¤ºç¯         LEDç¯D2_4
-    output[1:0] turning_show,      //è½¬å‘æ˜¾ç¤ºç¯         LEDç¯D1_5ã€LEDç¯D1_6
-    output[6:0] journey_show       //è¡Œç¨‹æ˜¾ç¤º
+    input front_detector,
+    input back_detector,
+    input left_detector,
+    input right_detector,
+    // °´¼ü
+    input power_button,          //µçÔ´¿ª¹Ø°´Å¥       °´¼üS2
+    input mode_button,           //Ä£Ê½ÇĞ»»°´Å¥       °´¼üS4
+    input left_button,           //×ó×ª°´Å¥           °´¼üS3
+    input right_button,          //ÓÒ×ª°´Å¥           °´¼üS0
+    // ¿ª¹Ø
+    input clutch,                //ÀëºÏ¿ª¹Ø           SW7
+    input throttle,              //ÓÍÃÅ¿ª¹Ø           SW6
+    input brake,                 //É²³µ¿ª¹Ø           SW5
+    input reverse,               //µ¹µ²¿ª¹Ø           SW4
+    // ÏÔÊ¾µÆ
+    output power_state,           //µçÔ´×´Ì¬ÏÔÊ¾µÆ      LEDµÆD1_0
+    output[1:0] driving_mode,     //¼İÊ»Ä£Ê½ÏÔÊ¾µÆ      LEDµÆD1_1¡¢D1_2
+//    output[1:0] car_state,        //Æû³µ×´Ì¬ÏÔÊ¾µÆ      LEDµÆD1_3¡¢D1_4
+    output clutch_show,           //ÀëºÏÏÔÊ¾µÆ         LEDµÆD2_7
+    output throttle_show,         //ÓÍÃÅÏÔÊ¾µÆ         LEDµÆD2_6
+    output break_show,            //É²³µÏÔÊ¾µÆ         LEDµÆD2_5
+    output reverse_show,          //µ¹µ²ÏÔÊ¾µÆ         LEDµÆD2_4
+    output[1:0] turning_show      //×ªÏòÏÔÊ¾µÆ         LEDµÆD1_5¡¢LEDµÆD1_6
+//    output[6:0] journey_show       //ĞĞ³ÌÏÔÊ¾
 );
-
-
-
-wire reset,enable,clk;
-//ä»å·¦å¾€å³ï¼Œåˆ†åˆ«ä»£è¡¨ç¦»åˆå¼€å…³ã€æ²¹é—¨å¼€å…³ã€åˆ¹è½¦å¼€å…³ã€å€’æ¡£å¼€å…³ï¼Œ1ä»£è¡¨å¼€å…³æ‰“å¼€ï¼Œ0ä»£è¡¨å¼€å…³å…³é—­ã€‚
-wire[3:0] switch_total = {clutch,throttle,brake,reverse};//å¼€å…³æ€»çŠ¶æ€
-//ä»å·¦å¾€å³ï¼Œç¬¬ä¸€ä½ä»£è¡¨ç”µæºæŒ‰é”®ï¼ŒäºŒä½ä»£è¡¨é©¾é©¶æ¨¡å¼é€‰æ‹©æŒ‰é”®ï¼Œä¸‰å››ä½ä»£è¡¨å·¦å³è½¬æŒ‰é”®ã€‚
-wire[3:0] button_total = {powerButton,modeButton,leftButton,rightButton};//æŒ‰é”®æ€»çŠ¶æ€
-
-reg[5:0] state;
-parameter   
-    S0 = 6'b0XXXXX,   //å…³æœºçŠ¶æ€ï¼ˆè¯¥çŠ¶æ€ä¸‹é™¤æ£€æµ‹åˆ°çš„ç”µæºæŒ‰é’®è¾“å…¥å¤–çš„æ‰€æœ‰æ£€æµ‹åˆ°çš„è¾“å…¥æ— æ•ˆï¼‰
-    S1 = 6'b11001X,   //å¼€æœºé»˜è®¤æ¨¡å¼(æ‰‹åŠ¨é©¾é©¶æ¨¡å¼æœªå¯åŠ¨çŠ¶æ€ä¸ºé»˜è®¤çŠ¶æ€)å¼€æœº&æ‰‹åŠ¨&non-starting
-    S2 = 6'b11010X,   //å¼€æœº&æ‰‹åŠ¨&starting
-    S3 = 6'b11011X,   //å¼€æœº&æ‰‹åŠ¨&moving,
-    S10 = 6'b101XXX,   //å¼€æœº&åŠè‡ªåŠ¨
-    S20 = 6'b111XXX;   //å¼€æœº&è‡ªåŠ¨
-
+wire clk;
+//´Ó×óÍùÓÒ£¬·Ö±ğ´ú±íÀëºÏ¿ª¹Ø¡¢ÓÍÃÅ¿ª¹Ø¡¢É²³µ¿ª¹Ø¡¢µ¹µµ¿ª¹Ø£¬1´ú±í¿ª¹Ø´ò¿ª£¬0´ú±í¿ª¹Ø¹Ø±Õ¡£
+wire[3:0] switch_total = {clutch,throttle,brake,reverse};//¿ª¹Ø×Ü×´Ì¬
+//´Ó×óÍùÓÒ£¬µÚÒ»Î»´ú±íµçÔ´°´¼ü£¬¶şÎ»´ú±í¼İÊ»Ä£Ê½Ñ¡Ôñ°´¼ü£¬ÈıËÄÎ»´ú±í×óÓÒ×ª°´¼ü¡£
+wire[3:0] button_total = {power_button,mode_button,left_button,right_button};//°´¼ü×Ü×´Ì¬
+wire[5:0] state;
 
 wire move_forward_signal;
 wire move_backward_signal;
 wire turn_left_signal;
 wire turn_right_signal;
-
 wire place_barrier_signal;
 wire destroy_barrier_signal;
 
-wire front_detector;
-wire back_detector;
-wire left_detector;
-wire right_detector;
 
-Clk_module clk_module(
-    sys_clk, reset, enable, clk
+clk_module clk_module(
+    .clk(sys_clk),
+    .reset(rst),
+    .enable(1),
+    .clk_out(clk)
 );
 
 state_machine state_machine(
-
+    .clk(clk),
+    .state(state),
+    .switch_total(switch_total),
+    .button_total(button_total)
 );
 
-Moving_module moving_module(
-
+moving_module moving_module(
+   .clk(clk),
+    .state(state),
+    .switch_total(switch_total),
+    .button_total(button_total), 
+    .move_forward_signal(move_forward_signal),
+    .move_backward_signal(move_backward_signal),
+    .turn_left_signal(turn_left_signal),
+    .turn_right_signal(turn_right_signal)
+    
 );
 
-Lighting_module lighting_module(
+//Lighting_module lighting_module(
 
-);
+//);
 
 
 SimulatedDevice simulated_device(
     .sys_clk(sys_clk),
     .rx(rx),
     .tx(tx),
-
     .move_forward_signal(move_forward_signal),
     .move_backward_signal(move_backward_signal),
     .turn_left_signal(turn_left_signal),

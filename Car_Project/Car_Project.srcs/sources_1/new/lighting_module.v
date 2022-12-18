@@ -4,8 +4,8 @@
 // Engineer: Mark455
 // 
 // Create Date: 2022/12/14 18:47:34
-// Design Name: clock module
-// Module Name: clk_module
+// Design Name: 
+// Module Name: lighting_module
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -24,63 +24,64 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module moving_module(input [5:0] state, [3:0] switchTotal, [3:0] buttonTotal, output reg forward, reg backward, reg left, reg right);
+module lighting_module(
+   input clk,
+    input rst,
+    input [3:0] switch_total,
+    input [3:0] button_total,
+    input [5:0] state
+);
     parameter manul_non_staring  = 6'b11001X;
     parameter manul_starting = 6'b11010X;
     parameter manul_moving = 6'b11011X;
     reg clutch,throttle,brake,reverse,leftButton,rightButton;
-    always@(*) begin
-        clutch <= switchTotal[3];
-        throttle <= switchTotal[2];
-        brake <= switchTotal[1];
-        reverse <= switchTotal[0];
-        leftButton <= buttonTotal[1];
-        rightButton <= buttonTotal[0];
-        case (state)
+    always@(posedge clk) begin
+        clutch = switch_total[3];
+        throttle = switch_total[2];
+        brake = switch_total[1];
+        reverse = switch_total[0];
+        leftButton = button_total[1];
+        rightButton = button_total[0];
+        casex (state)
             manul_moving: begin
                 if (throttle & ~reverse) begin
-                    forward <= 1;
+                    move_forward_signal = 1;
                 end
                 else if (throttle & reverse) begin
-                    backward <= 1;
+                    move_backward_signal = 1;
                 end else begin
-                    forward    <= 0;
-                    backward <= 0;
+                    move_forward_signal    = 0;
+                    move_backward_signal = 0;
                 end
-
                 if (leftButton & ~rightButton) begin
-                    left    <= 1;
-                    right   <= 0;
+                    turn_left_signal    = 1;
+                    turn_right_signal   = 0;
                 end else if (~leftButton & rightButton) begin
-                    left    <= 0;
-                    right   <= 1;
+                    turn_left_signal    = 0;
+                    turn_right_signal   = 1;
                 end else begin
-                    left    <= 0;
-                    right   <= 0;
+                    turn_left_signal    = 0;
+                    turn_right_signal   = 0;
                 end
             end
             manul_non_staring: begin
                 if (leftButton & ~rightButton) begin
-                    left    <= 1;
-                    right   <= 0;
+                    turn_left_signal    = 1;
+                    turn_right_signal   = 0;
                 end else if (~leftButton & rightButton) begin
-                    left    <= 0;
-                    right   <= 1;
+                    turn_left_signal    = 0;
+                    turn_right_signal   = 1;
                 end else begin
-                    left    <= 0;
-                    right   <= 0;
+                    turn_left_signal    = 0;
+                    turn_right_signal   = 0;
                 end
             end
             default: begin
-                forward     <= 0;
-                backward    <= 0;
-                left        <= 0;
-                right       <= 0;
+                move_forward_signal     = 0;
+                move_backward_signal    = 0;
+                turn_left_signal        = 0;
+                turn_right_signal       = 0;
             end
         endcase
     end
 endmodule
-
-
-
-
