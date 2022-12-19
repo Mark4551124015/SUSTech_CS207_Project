@@ -59,83 +59,80 @@ module state_machine(
     
     always @(posedge clk) begin
         if (reset_click) begin
-        state <= rest;
+            state <= rest;  
         end
         else begin
-        casex(state)
-        power_off:                                     //这里没有写完，应该用clk判断
-        begin
-            if(power) begin
-                if (init == 29'o2170321400) begin
-                    state <= manual_nonstarting;
-                    init <=0;
-                end else begin
-                    init = init + 1;
+            casex(state)
+                power_off:
+                begin
+                    if(power) begin
+                        if (init == 29'o2170321400) begin
+                            state <= manual_nonstarting;
+                            init <=0;
+                        end else begin
+                            init = init + 1;
+                        end
+                    end
+                    else begin
+                        state <= state;
+                        init <=0;
+                    end
                 end
-            end
-            else begin
-                state <= state;
-                init <=0;
-            end
-        end
-
-
-        manual_nonstarting:
-        begin
-            if (~clutch & (brake|(last_reverse != reverse ))) begin
-               state <= rest;
-           end
-           else if (clutch&(last_reverse!=reverse)) begin
-               last_reverse<=reverse;
-           end
-           else if (clutch & throttle) begin
-                state <= manual_starting;
-            end
-            else begin
-                state <= manual_nonstarting;
-            end
-        end
-        
-        
-        manual_starting:
-        begin
-            if (~clutch &  (brake|(last_reverse != reverse ))) begin
-               state <= rest;
-            end
-            else if (clutch&(last_reverse!=reverse)) begin
-                last_reverse<=reverse;
-            end
-            else if (clutch&brake) begin
-                state <= manual_nonstarting;
-            end
-            else if (~clutch & throttle) begin
-                state <= manual_moving;
-            end
-            else begin
-                state <= manual_starting;
-            end
-        end
-        
-        
-        
-        manual_moving:
-        begin
-            if (~clutch &  (brake|(last_reverse != reverse ))) begin
-                state <= rest;
-            end
-            else if (clutch | ~throttle) begin
-                state<= manual_starting;
-            end
-            else begin
-                state <= manual_moving;
-            end
-        end
-        default: 
-        begin
-        init <= init;
-        state <= state;
-        end
-        endcase                                                                 //其他情况不变
+                //----------------------------------------------------
+                manual_nonstarting:
+                begin
+                    if (~clutch & (brake|(last_reverse != reverse ))) begin
+                       state <= rest;
+                   end
+                   else if (clutch&(last_reverse!=reverse)) begin
+                       last_reverse<=reverse;
+                   end
+                   else if (clutch & throttle) begin
+                        state <= manual_starting;
+                    end
+                    else begin
+                        state <= manual_nonstarting;
+                    end
+                end
+                 //----------------------------------------------------
+                manual_starting:
+                begin
+                    if (~clutch &  (brake|(last_reverse != reverse ))) begin
+                       state <= rest;
+                    end
+                    else if (clutch&(last_reverse!=reverse)) begin
+                        last_reverse<=reverse;
+                    end
+                    else if (clutch&brake) begin
+                        state <= manual_nonstarting;
+                    end
+                    else if (~clutch & throttle) begin
+                        state <= manual_moving;
+                    end
+                    else begin
+                        state <= manual_starting;
+                    end
+                end
+                 //----------------------------------------------------
+                manual_moving:
+                begin
+                    if (~clutch &  (brake|(last_reverse != reverse ))) begin
+                        state <= rest;
+                    end
+                    else if (clutch | ~throttle) begin
+                        state<= manual_starting;
+                    end
+                    else begin
+                        state <= manual_moving;
+                    end
+                end
+                 //----------------------------------------------------
+                default: 
+                begin
+                    init <= init;
+                    state <= state;
+                end
+            endcase                                                                 //其他情况不变
         end
     end
 endmodule

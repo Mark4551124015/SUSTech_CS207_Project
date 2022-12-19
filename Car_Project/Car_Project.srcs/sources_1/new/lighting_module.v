@@ -62,14 +62,28 @@ module lighting_module(
         rightButton = button_total[0];
         
         casex (state)
-            
-            
             manual_non_staring: 
             begin
                 turning_show[0] <=1;
                 turning_show[1] <=1;
             end
-            
+             //----------------------------------------------------
+            manual_starting: 
+            begin
+                if (leftButton & ~rightButton) begin
+                   turning_show[0]    = 1;
+                   turning_show[1]    = 0;
+                end
+                else if (~leftButton & rightButton) begin
+                    turning_show[0]   = 0;
+                    turning_show[1]   = 1;
+                end 
+                else begin
+                    turning_show[0] <=0;
+                    turning_show[1] <=0;
+                end
+            end
+            //----------------------------------------------------
             manual_moving: 
             begin
                 if (leftButton & ~rightButton) begin
@@ -85,7 +99,8 @@ module lighting_module(
                     turning_show[1] <=0;
                 end
             end
-           default:
+             //----------------------------------------------------
+            default:
             begin
                 turning_show[0] <=0;
                 turning_show[1] <=0;
