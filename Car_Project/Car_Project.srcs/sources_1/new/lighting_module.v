@@ -25,16 +25,34 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module lighting_module(
-   input clk,
-    input rst,
+    input clk,
+    input [4:0] state,
     input [3:0] switch_total,
     input [3:0] button_total,
-    input [5:0] state
+    output power_state,           //µÁ‘¥◊¥Ã¨œ‘ æµ∆      LEDµ∆D1_0
+    output [1:0] driving_mode,     //º› ªƒ£ Ωœ‘ æµ∆      LEDµ∆D1_1°¢D1_2
+    output [1:0] car_state,        //∆˚≥µ◊¥Ã¨œ‘ æµ∆      LEDµ∆D1_3°¢D1_4
+    output clutch_show,           //¿Î∫œœ‘ æµ∆         LEDµ∆D2_7
+    output throttle_show,         //”Õ√≈œ‘ æµ∆         LEDµ∆D2_6
+    output break_show,            //…≤≥µœ‘ æµ∆         LEDµ∆D2_5
+    output reverse_show,          //µπµ≤œ‘ æµ∆         LEDµ∆D2_4
+    output reg [1:0]  turning_show      //◊™œÚœ‘ æµ∆         LEDµ∆D1_5°¢LEDµ∆D1_6
 );
-    parameter manul_non_staring  = 6'b11001X;
-    parameter manul_starting = 6'b11010X;
-    parameter manul_moving = 6'b11011X;
+    parameter power_off = 5'b0XXXX;
+    parameter manual_non_staring  = 5'b11001;
+    parameter manual_starting = 5'b11010;
+    parameter manual_moving = 5'b11011;
     reg clutch,throttle,brake,reverse,leftButton,rightButton;
+    
+    assign power_state = state[4];
+    assign driving_mode = state[3:2];
+    assign car_state  = state[1:0];
+    
+    assign clutch_show = switch_total[3] & power_state;
+    assign throttle_show = switch_total[2] & power_state;
+    assign break_show = switch_total[1] & power_state;
+    assign reverse_show = switch_total[0] & power_state;
+
     always@(posedge clk) begin
         clutch = switch_total[3];
         throttle = switch_total[2];
@@ -42,45 +60,35 @@ module lighting_module(
         reverse = switch_total[0];
         leftButton = button_total[1];
         rightButton = button_total[0];
+        
         casex (state)
-            manul_moving: begin
-                if (throttle & ~reverse) begin
-                    move_forward_signal = 1;
-                end
-                else if (throttle & reverse) begin
-                    move_backward_signal = 1;
-                end else begin
-                    move_forward_signal    = 0;
-                    move_backward_signal = 0;
-                end
+            
+            
+            manual_non_staring: 
+            begin
+                turning_show[0] <=1;
+                turning_show[1] <=1;
+            end
+            
+            manual_moving: 
+            begin
                 if (leftButton & ~rightButton) begin
-                    turn_left_signal    = 1;
-                    turn_right_signal   = 0;
-                end else if (~leftButton & rightButton) begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 1;
-                end else begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 0;
+                   turning_show[0]    = 1;
+                   turning_show[1]    = 0;
+                end
+                else if (~leftButton & rightButton) begin
+                    turning_show[0]   = 0;
+                    turning_show[1]   = 1;
+                end 
+                else begin
+                    turning_show[0] <=0;
+                    turning_show[1] <=0;
                 end
             end
-            manul_non_staring: begin
-                if (leftButton & ~rightButton) begin
-                    turn_left_signal    = 1;
-                    turn_right_signal   = 0;
-                end else if (~leftButton & rightButton) begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 1;
-                end else begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 0;
-                end
-            end
-            default: begin
-                move_forward_signal     = 0;
-                move_backward_signal    = 0;
-                turn_left_signal        = 0;
-                turn_right_signal       = 0;
+           default:
+            begin
+                turning_show[0] <=0;
+                turning_show[1] <=0;
             end
         endcase
     end

@@ -9,7 +9,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports {driving_mode[0]}]
 #汽车状态显示灯      LED灯D1_3、D1_4
 set_property PACKAGE_PIN K6 [get_ports {car_state[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {car_state[1]}]
-set_property PACKAGE_PIN J5 [get_ports {car_state[0}]
+set_property PACKAGE_PIN J5 [get_ports {car_state[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {car_state[0]}]
 #离合显示灯         LED灯D2_7
 set_property PACKAGE_PIN F6 [get_ports clutch_show]
@@ -26,5 +26,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports reverse_show]
 #转向显示灯         LED灯D1_5、LED灯D1_6
 set_property PACKAGE_PIN H5 [get_ports {turning_show[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[1]}]
+
 set_property PACKAGE_PIN H6 [get_ports {turning_show[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[0]}]

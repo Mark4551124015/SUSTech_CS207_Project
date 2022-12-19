@@ -1,9 +1,10 @@
 // Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2017.4 (win64) Build 2086221 Fri Dec 15 20:55:39 MST 2017
-// Date        : Wed Oct 26 21:38:40 2022
-// Host        : Yan_ice running 64-bit major release  (build 9200)
-// Command     : write_verilog -force -mode synth_stub d:/UART_test/UART_test.srcs/sources_1/ip/UART/UART_stub.v
+// Date        : Mon Dec 19 23:02:34 2022
+// Host        : Mark455-Desktop running 64-bit major release  (build 9200)
+// Command     : write_verilog -force -mode synth_stub
+//               D:/WORKSPACE/SUSTech_CS207_Project/Car_Project/Car_Project.srcs/sources_1/ip/UART/UART_stub.v
 // Design      : UART
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7a35tcsg324-1

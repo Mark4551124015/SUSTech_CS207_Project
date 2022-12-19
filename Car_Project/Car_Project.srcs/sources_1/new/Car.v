@@ -41,12 +41,12 @@ module car(
     // 显示灯
     output power_state,           //电源状态显示灯      LED灯D1_0
     output[1:0] driving_mode,     //驾驶模式显示灯      LED灯D1_1、D1_2
-//    output[1:0] car_state,        //汽车状态显示灯      LED灯D1_3、D1_4
+    output[1:0] car_state,        //汽车状态显示灯      LED灯D1_3、D1_4
     output clutch_show,           //离合显示灯         LED灯D2_7
     output throttle_show,         //油门显示灯         LED灯D2_6
     output break_show,            //刹车显示灯         LED灯D2_5
     output reverse_show,          //倒挡显示灯         LED灯D2_4
-    output[1:0] turning_show      //转向显示灯         LED灯D1_5、LED灯D1_6
+    output [1:0] turning_show      //转向显示灯         LED灯D1_5、LED灯D1_6
 //    output[6:0] journey_show       //行程显示
 );
 wire clk;
@@ -54,7 +54,8 @@ wire clk;
 wire[3:0] switch_total = {clutch,throttle,brake,reverse};//开关总状态
 //从左往右，第一位代表电源按键，二位代表驾驶模式选择按键，三四位代表左右转按键。
 wire[3:0] button_total = {power_button,mode_button,left_button,right_button};//按键总状态
-wire[5:0] state;
+wire[4:0] state;
+
 
 wire move_forward_signal;
 wire move_backward_signal;
@@ -64,18 +65,15 @@ wire place_barrier_signal;
 wire destroy_barrier_signal;
 
 
-clk_module clk_module(
-    .clk(sys_clk),
-    .reset(rst),
-    .enable(1),
-    .clk_out(clk)
-);
+
+assign clk = sys_clk;
 
 state_machine state_machine(
     .clk(clk),
-    .state(state),
+    .rst(rst),
     .switch_total(switch_total),
-    .button_total(button_total)
+    .button_total(button_total),
+    .state(state)
 );
 
 moving_module moving_module(
@@ -87,12 +85,22 @@ moving_module moving_module(
     .move_backward_signal(move_backward_signal),
     .turn_left_signal(turn_left_signal),
     .turn_right_signal(turn_right_signal)
-    
 );
 
-//Lighting_module lighting_module(
-
-//);
+lighting_module lighting_module(
+    .clk(clk),
+    .state(state),
+    .switch_total(switch_total),
+    .button_total(button_total),
+    .power_state(power_state),
+    .driving_mode(driving_mode),
+    .car_state(car_state),
+    .clutch_show(clutch_show),
+    .throttle_show(throttle_show),
+    .break_show(break_show),
+    .reverse_show(reverse_show),
+    .turning_show(turning_show)
+);
 
 
 SimulatedDevice simulated_device(
