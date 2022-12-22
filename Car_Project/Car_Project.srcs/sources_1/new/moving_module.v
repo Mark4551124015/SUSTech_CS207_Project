@@ -28,16 +28,25 @@ module moving_module(
     input clk,
     input [4:0] state,
     input [3:0] switch_total,
-    input [3:0] button_total,
+    input [4:0] button_total,
+    input [31:0] cool,
     output reg move_forward_signal,
     output reg move_backward_signal,
     output reg turn_left_signal,
     output reg turn_right_signal
 );
-    parameter power_off = 5'b0XXXX;
-    parameter manual_non_staring  = 5'b11001;
-    parameter manual_starting = 5'b11010;
-    parameter manual_moving = 5'b11011;
+    parameter
+        rest = 5'b00000,
+        power_off = 5'b0XXXX,   //关机状态 该状态下除检测到的电源按钮输入外的所有检测到的输入无效
+        manual = 5'b110XX,
+        manual_non_starting = 5'b11001,   //开机默认模式 手动驾驶模式未启动状态为默认状态 开机&手动&non-starting
+        manual_starting = 5'b11010,   //开机&手动&starting
+        manual_moving = 5'b11011,   //开机&手动&moving
+        semi = 5'b101XX,
+        semi_waiting = 5'b10100,        //开机 半自动waiting
+        semi_turning_left = 5'b10101,        //开机 半自动左转
+        semi_turning_right = 5'b10110,        //开机 半自动右转
+        semi_moving_forward = 5'b10111;        //开机 半自动直行
     wire clutch,throttle,brake,reverse,leftButton,rightButton;
     assign clutch = switch_total[3];
     assign throttle = switch_total[2];
@@ -49,19 +58,19 @@ module moving_module(
     
     always@(posedge clk) begin
         casex (state)
-            manual_non_staring: 
-            begin
-                if (leftButton & ~rightButton) begin
-                    turn_left_signal    = 1;
-                    turn_right_signal   = 0;
-                end else if (~leftButton & rightButton) begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 1;
-                end else begin
-                    turn_left_signal    = 0;
-                    turn_right_signal   = 0;
-                end
-            end
+//            manual_non_starting: 
+//            begin
+//                if (leftButton & ~rightButton) begin
+//                    turn_left_signal    = 1;
+//                    turn_right_signal   = 0;
+//                end else if (~leftButton & rightButton) begin
+//                    turn_left_signal    = 0;
+//                    turn_right_signal   = 1;
+//                end else begin
+//                    turn_left_signal    = 0;
+//                    turn_right_signal   = 0;
+//                end
+//            end
             manual_starting: 
                 begin
                     if (leftButton & ~rightButton) begin
@@ -77,7 +86,6 @@ module moving_module(
                     move_forward_signal    = 0;
                     move_backward_signal = 0;
                 end
-
             manual_moving: 
             begin
                 if (throttle & ~reverse) begin
@@ -102,6 +110,55 @@ module moving_module(
                     turn_right_signal   = 0;
                 end
             end
+            
+            
+            semi_moving_forward:
+            begin
+                if (cool==0) begin
+                    move_forward_signal         = 1;
+                    move_backward_signal       = 0;
+                    turn_left_signal                  = 0;
+                    turn_right_signal                = 0;
+                end
+                else begin
+                    move_forward_signal         = 0;
+                    move_backward_signal      = 0;
+                    turn_left_signal                  = 0;
+                    turn_right_signal                = 0;
+                end
+            end
+            semi_turning_left:
+            begin
+                if (cool==0) begin
+                    move_forward_signal         = 0;
+                    move_backward_signal       = 0;
+                    turn_left_signal                  = 1;
+                    turn_right_signal                = 0;
+                end
+                else begin
+                    move_forward_signal         = 0;
+                    move_backward_signal      = 0;
+                    turn_left_signal                  = 0;
+                    turn_right_signal                = 0;
+                end
+            end
+            semi_turning_right:
+                        begin
+                            if (cool==0) begin
+                                move_forward_signal         = 0;
+                                move_backward_signal       = 0;
+                                turn_left_signal                  = 0;
+                                turn_right_signal                = 1;
+                            end
+                            else begin
+                                move_forward_signal         = 0;
+                                move_backward_signal      = 0;
+                                turn_left_signal                  = 0;
+                                turn_right_signal                = 0;
+                            end
+                        end
+            
+
             default: 
             begin
                 move_forward_signal       = 0;

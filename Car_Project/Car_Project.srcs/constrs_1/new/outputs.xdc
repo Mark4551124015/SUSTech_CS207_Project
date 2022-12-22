@@ -23,9 +23,20 @@ set_property IOSTANDARD LVCMOS33 [get_ports break_show]
 #µπµ≤œ‘ æµ∆         LEDµ∆D2_4
 set_property PACKAGE_PIN J4 [get_ports reverse_show]
 set_property IOSTANDARD LVCMOS33 [get_ports reverse_show]
+set_property PACKAGE_PIN K1 [get_ports reverse_mode]
+set_property IOSTANDARD LVCMOS33 [get_ports reverse_mode]
 #◊™œÚœ‘ æµ∆         LEDµ∆D1_5°¢LEDµ∆D1_6
 set_property PACKAGE_PIN H5 [get_ports {turning_show[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[1]}]
-
 set_property PACKAGE_PIN H6 [get_ports {turning_show[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[0]}]
+
+#debug
+set_property PACKAGE_PIN K2 [get_ports {detector_show[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {detector_show[0]}]
+set_property PACKAGE_PIN J2 [get_ports {detector_show[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {detector_show[1]}]
+set_property PACKAGE_PIN J3 [get_ports {detector_show[2]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {detector_show[2]}]
+set_property PACKAGE_PIN H4 [get_ports {detector_show[3]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {detector_show[3]}]

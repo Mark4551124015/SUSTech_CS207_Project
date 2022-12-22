@@ -1,9 +1,15 @@
 #电源开关按钮       按键S2
-set_property PACKAGE_PIN U4 [get_ports power_button]
+set_property PACKAGE_PIN R15 [get_ports power_button]
 set_property IOSTANDARD LVCMOS33 [get_ports power_button]
-#模式切换按钮       按键S4
-set_property PACKAGE_PIN R15 [get_ports mode_button]
-set_property IOSTANDARD LVCMOS33 [get_ports mode_button]
+
+set_property PACKAGE_PIN R17 [get_ports power_off]
+set_property IOSTANDARD LVCMOS33 [get_ports power_off]
+
+
+#前进按钮       按键S4
+set_property PACKAGE_PIN U4 [get_ports front_button]
+set_property IOSTANDARD LVCMOS33 [get_ports front_button]
+
 #左转按钮           按键S3
 set_property PACKAGE_PIN V1 [get_ports left_button]
 set_property IOSTANDARD LVCMOS33 [get_ports left_button]
@@ -23,6 +29,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports brake]
 set_property PACKAGE_PIN P2 [get_ports reverse]
 set_property IOSTANDARD LVCMOS33 [get_ports reverse]
 
-
-set_property PACKAGE_PIN R17 [get_ports rst]
+#RST
+set_property PACKAGE_PIN P15 [get_ports rst]
+set_property IOSTANDARD LVCMOS33 [get_ports rst]
 
