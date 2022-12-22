@@ -41,8 +41,8 @@ module record_module(
     parameter manual_moving = 5'b11011;
     wire clk_2hz, clk_100hz, car_moving;
     assign car_moving = (move_forward_signal || move_backward_signal);
-    number_translator_module u_number_translator0(.number(current_num0), .reset(reset), .seg_out(seg_out0));
-    number_translator_module u_number_translator1(.number(current_num1), .reset(reset), .seg_out(seg_out1));
+    number_to_seg_module number_to_seg0(.number(current_num0), .reset(reset), .seg_out(seg_out0));
+    number_to_seg_module number_to_seg1(.number(current_num1), .reset(reset), .seg_out(seg_out1));
     blink_module seg_refresh(
         .clk(clk),
         .enable(car_moving),

@@ -58,7 +58,8 @@ module state_machine(
         semi_turning_right = 5'b10110,        //开机 半自动右转
         semi_moving_forward = 5'b10111,        //开机 半自动直行
         
-        turn_sec = 32'o461132000,
+        turn_sec = 32'o504177500,
+        turn_back_sec = 32'o1142264000,
         forward_sec = 32'o344703400,
         cool_sec = 32'o276570200 ;
 
@@ -66,7 +67,8 @@ module state_machine(
     assign throttle = switch_total[2];
     assign brake = switch_total[1];
     assign reverse = switch_total[0];
-    reg isCross,needLeft,needRight;
+    reg isCross,needLeft,needRight,needBack;
+    reg turning_back;
     always @(posedge clk) begin
         casex(detector)
             4'b0X00 , 4'b0X10 , 4'b0X01 , 4'b1X00:
@@ -74,24 +76,36 @@ module state_machine(
                 isCross=1;
                 needLeft = 0;
                 needRight = 0;
+                needBack = 0;
             end
             4'b1X01:
             begin
                 isCross=0;
                 needLeft = 1;
                 needRight = 0;
+                needBack = 0;
+
             end
             4'b1X10:
             begin
                 isCross   =0;
                 needLeft = 0;
                 needRight = 1;
+                needBack = 0;
+            end
+            4'b1011:
+            begin
+                isCross   =0;
+                needLeft = 0;
+                needRight = 0;
+                needBack = 1;
             end
             default:
             begin
                 isCross   =0;
                 needLeft = 0;
                 needRight = 0;
+                needBack = 0;
             end
         endcase
     end
@@ -118,10 +132,10 @@ module state_machine(
     );
     
     click_detector on_mode_click(
-            .clk(clk),
-            .button(mode),
-            .button_click(mode_click)
-        );
+        .clk(clk),
+        .button(mode),
+        .button_click(mode_click)
+    );
 
     assign power = button_total[4];
     
@@ -151,19 +165,18 @@ module state_machine(
                 //----------------------------------------------------
                 manual_non_starting:
                 begin
-                    if (~clutch & (throttle|(last_reverse != reverse ))) begin
+                     if (mode_click) begin
+                        state <= semi_waiting;
+                    end
+                    else if (~clutch & (throttle|(last_reverse != reverse ))) begin
                        state <= rest;
                        last_reverse = 0;
-
                    end
                    else if (clutch&(last_reverse!=reverse)) begin
                        last_reverse<=reverse;
                    end
                    else if (clutch & throttle & ~brake) begin
                         state <= manual_starting;
-                    end
-                    else if (mode_click) begin
-                        state <= semi_waiting;
                     end
                     else begin
                         state <= manual_non_starting;
@@ -172,7 +185,10 @@ module state_machine(
                  //----------------------------------------------------
                 manual_starting:
                 begin
-                    if (~clutch &  (last_reverse != reverse )) begin
+                    if (mode_click) begin
+                       state <= semi_waiting;
+                    end
+                    else if (~clutch &  (last_reverse != reverse )) begin
                        state <= rest;
                        last_reverse = 0;
 
@@ -193,10 +209,12 @@ module state_machine(
                  //----------------------------------------------------
                 manual_moving:
                 begin
-                    if (~clutch &  (last_reverse != reverse )) begin
+                    if (mode_click) begin
+                        state <= semi_waiting;
+                    end
+                    else if (~clutch &  (last_reverse != reverse )) begin
                         state <= rest;
                         last_reverse = 0;
-
                     end
                     else if (brake) begin 
                         state <= manual_non_starting;
@@ -213,7 +231,10 @@ module state_machine(
                  //----------------------------------------------------                 
                  semi_waiting:
                  begin
-                    if (front_click) begin
+                    if (mode_click) begin
+                        state <= manual_non_starting;
+                    end
+                    else  if (front_click) begin
                         semi_cnt <= 0;
                         cool  <= 0;
                         state <= semi_moving_forward;
@@ -221,11 +242,11 @@ module state_machine(
                     else if (left_click) begin
                         semi_cnt <= 0;
                         cool  <= 0;
-
                         state <= semi_turning_left;
                     end
                     else if (right_click) begin
                         semi_cnt <= 0;
+                        turning_back  = 0;
                         cool  <= 0;
                         state <= semi_turning_right;
                     end
@@ -239,6 +260,7 @@ module state_machine(
                     if (cool > 0 ) begin
                         cool = cool - 1;
                         state <= semi_moving_forward;
+                        turning_back = 0;
                     end
                     else begin
                         if (semi_cnt < forward_sec) begin
@@ -259,6 +281,13 @@ module state_machine(
                             else if (needRight) begin
                                 semi_cnt = 0;
                                 cool = cool_sec;
+                                turning_back  = 0;
+                                state <= semi_turning_right;
+                            end
+                            else if (needBack) begin
+                                semi_cnt = 0;
+                                cool = cool_sec;
+                                turning_back  = 1;
                                 state <= semi_turning_right;
                             end
                             else begin
@@ -285,8 +314,15 @@ module state_machine(
                         end
                         else if (needRight) begin
                             semi_cnt = 0;
+                            turning_back  = 0;
                             state <= semi_turning_right;
                         end
+//                        else if (needBack) begin
+//                            semi_cnt = 0;
+//                            cool = cool_sec;
+//                            turning_back  = 1;
+//                            state <= semi_turning_right;
+//                        end
                     end
                     
                     else begin
@@ -319,6 +355,10 @@ module state_machine(
                             state <= semi_turning_left;
                         end
                         else if (needRight) begin
+                            turning_back = 0;
+                            state <= semi_turning_right;
+                        end
+                        else if (needBack) begin
                             state <= semi_turning_right;
                         end
                     end
@@ -328,9 +368,15 @@ module state_machine(
                             state <= semi_turning_right;
                         end
                         else begin
-                            semi_cnt = 0;
-                            cool = cool_sec;
-                            state <= semi_moving_forward;
+                            if (turning_back == 1) begin
+                                turning_back = 0;
+                                semi_cnt = 0;
+                            end
+                            else begin
+                                semi_cnt = 0;
+                                cool = cool_sec;
+                                state <= semi_moving_forward;
+                            end
                         end
                     end
                 end
