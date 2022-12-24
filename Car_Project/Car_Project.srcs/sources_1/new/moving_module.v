@@ -29,6 +29,7 @@ module moving_module(
     input [4:0] state,
     input [3:0] switch_total,
     input [4:0] button_total,
+    input [3:0] auto_move,
     input [31:0] cool,
     output reg move_forward_signal,
     output reg move_backward_signal,
@@ -37,40 +38,28 @@ module moving_module(
 );
     parameter
         rest = 5'b00000,
-        power_off = 5'b0XXXX,   //¹Ø»ú×´Ì¬ ¸Ã×´Ì¬ÏÂ³ı¼ì²âµ½µÄµçÔ´°´Å¥ÊäÈëÍâµÄËùÓĞ¼ì²âµ½µÄÊäÈëÎŞĞ§
+        power_off = 5'b0XXXX,   //å…³æœºçŠ¶æ€ è¯¥çŠ¶æ€ä¸‹é™¤æ£€æµ‹åˆ°çš„ç”µæºæŒ‰é’®è¾“å…¥å¤–çš„æ‰€æœ‰æ£€æµ‹åˆ°çš„è¾“å…¥æ— æ•ˆ
         manual = 5'b110XX,
-        manual_non_starting = 5'b11001,   //¿ª»úÄ¬ÈÏÄ£Ê½ ÊÖ¶¯¼İÊ»Ä£Ê½Î´Æô¶¯×´Ì¬ÎªÄ¬ÈÏ×´Ì¬ ¿ª»ú&ÊÖ¶¯&non-starting
-        manual_starting = 5'b11010,   //¿ª»ú&ÊÖ¶¯&starting
-        manual_moving = 5'b11011,   //¿ª»ú&ÊÖ¶¯&moving
+        manual_non_starting = 5'b11001,   //å¼€æœºé»˜è®¤æ¨¡å¼ æ‰‹åŠ¨é©¾é©¶æ¨¡å¼æœªå¯åŠ¨çŠ¶æ€ä¸ºé»˜è®¤çŠ¶æ€ å¼€æœº&æ‰‹åŠ¨&non-starting
+        manual_starting = 5'b11010,   //å¼€æœº&æ‰‹åŠ¨&starting
+        manual_moving = 5'b11011,   //å¼€æœº&æ‰‹åŠ¨&moving
         semi = 5'b101XX,
-        semi_waiting = 5'b10100,        //¿ª»ú °ë×Ô¶¯waiting
-        semi_turning_left = 5'b10101,        //¿ª»ú °ë×Ô¶¯×ó×ª
-        semi_turning_right = 5'b10110,        //¿ª»ú °ë×Ô¶¯ÓÒ×ª
-        semi_moving_forward = 5'b10111;        //¿ª»ú °ë×Ô¶¯Ö±ĞĞ
+        semi_waiting = 5'b10100,                //å¼€æœº åŠè‡ªåŠ¨waiting
+        semi_turning_left = 5'b10101,           //å¼€æœº åŠè‡ªåŠ¨å·¦è½¬
+        semi_turning_right = 5'b10110,          //å¼€æœº åŠè‡ªåŠ¨å³è½¬
+        semi_moving_forward = 5'b10111,         //å¼€æœº åŠè‡ªåŠ¨ç›´è¡Œ
+        auto = 5'b111XX;
+
     wire clutch,throttle,brake,reverse,leftButton,rightButton;
     assign clutch = switch_total[3];
     assign throttle = switch_total[2];
     assign brake = switch_total[1];
     assign reverse = switch_total[0];
-    
     assign leftButton = button_total[1];
     assign rightButton = button_total[0];
     
     always@(posedge clk) begin
         casex (state)
-//            manual_non_starting: 
-//            begin
-//                if (leftButton & ~rightButton) begin
-//                    turn_left_signal    = 1;
-//                    turn_right_signal   = 0;
-//                end else if (~leftButton & rightButton) begin
-//                    turn_left_signal    = 0;
-//                    turn_right_signal   = 1;
-//                end else begin
-//                    turn_left_signal    = 0;
-//                    turn_right_signal   = 0;
-//                end
-//            end
             manual_starting: 
                 begin
                     if (leftButton & ~rightButton) begin
@@ -84,7 +73,7 @@ module moving_module(
                         turn_right_signal   = 0;
                     end
                     move_forward_signal    = 0;
-                    move_backward_signal = 0;
+                    move_backward_signal   = 0;
                 end
             manual_moving: 
             begin
@@ -157,8 +146,47 @@ module moving_module(
                                 turn_right_signal                = 0;
                             end
                         end
-            
 
+            auto:
+            begin
+                casex(auto_move)
+                    4'b1000:
+                    begin
+                        move_forward_signal             = 1;
+                        move_backward_signal            = 0;
+                        turn_left_signal                = 0;
+                        turn_right_signal               = 0;
+                    end
+                    4'b0100:
+                    begin
+                        move_forward_signal             = 0;
+                        move_backward_signal            = 1;
+                        turn_left_signal                = 0;
+                        turn_right_signal               = 0;
+                    end
+                    4'b0010:
+                    begin
+                        move_forward_signal             = 0;
+                        move_backward_signal            = 0;
+                        turn_left_signal                = 1;
+                        turn_right_signal               = 0;
+                    end
+                    4'b0001:
+                    begin
+                        move_forward_signal             = 0;
+                        move_backward_signal            = 0;
+                        turn_left_signal                = 0;
+                        turn_right_signal               = 1;
+                    end
+                    default:
+                    begin
+                        move_forward_signal             = 0;
+                        move_backward_signal            = 0;
+                        turn_left_signal                = 0;
+                        turn_right_signal               = 0;
+                    end
+                endcase
+            end
             default: 
             begin
                 move_forward_signal       = 0;

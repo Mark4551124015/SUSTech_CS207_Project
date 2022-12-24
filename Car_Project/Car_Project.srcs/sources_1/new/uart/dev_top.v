@@ -44,5 +44,4 @@ module SimulatedDevice(
     assign right_detector = rec[3];
     
     uart_top md(.clk(sys_clk), .rst(0), .data_in(in), .data_rec(rec), .rxd(rx), .txd(tx));
-    
 endmodule

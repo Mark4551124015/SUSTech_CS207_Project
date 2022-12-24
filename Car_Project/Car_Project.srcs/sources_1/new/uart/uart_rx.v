@@ -9,12 +9,12 @@
 //
 
 
-module uart_rx(clk_16x,rst,rxd,data_rec,data_ready,data_error);//½ÓÊÕÆ÷Éè¼Æ
-input clk_16x;//16±¶µÄ²¨ÌØÂÊ²ÉÑùÊ±ÖÓÐÅºÅ
-input rst;//¸´Î»ÐÅºÅ
-input rxd;//½ÓÊÕ´®ÐÐÊý¾ÝÊäÈë
-output reg data_ready = 0;//Êý¾Ý×¼±¸ºÃÐÅºÅ£¬µ±data_ready=1Ê±£¬ÌáÐÑºó¼¶Éè±¸¿ÉÒÔ½ÓÊÕÕâ8Î»Êý¾Ý
-output reg data_error = 0;//ÆæÅ¼Ð£Ñé´í
+module uart_rx(clk_16x,rst,rxd,data_rec,data_ready,data_error);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+input clk_16x;//16ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½Ê²ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Åºï¿½
+input rst;//ï¿½ï¿½Î»ï¿½Åºï¿½
+input rxd;//ï¿½ï¿½ï¿½Õ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+output reg data_ready = 0;//ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ£ï¿½ï¿½ï¿½data_ready=1Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½è±¸ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½8Î»ï¿½ï¿½ï¿½ï¿½
+output reg data_error = 0;//ï¿½ï¿½Å¼Ð£ï¿½ï¿½ï¿½
 output[7:0] data_rec;
 
 reg framing_error;
@@ -25,14 +25,14 @@ reg rxd1 = 1,rxd2 = 1;
 reg start_flag = 0;
 
 parameter width=8;
-parameter idle=1,one=2,two=3,stop=4;//×´Ì¬»úµÄ4¸ö×´Ì¬
+parameter idle=1,one=2,two=3,stop=4;//×´Ì¬ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½×´Ì¬
 
 reg[width-1:0] present_state = idle;
-reg[width-1:0] next_state = idle;//×´Ì¬»úµ±Ç°×´Ì¬ºÍÏÂÒ»¸ö×´Ì¬
+reg[width-1:0] next_state = idle;//×´Ì¬ï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
 
 assign data_rec=data_out1;
 
-//¸üÐÂ×´Ì¬»úµ±Ç°×´Ì¬
+//ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Ç°×´Ì¬
 always@ (posedge clk_16x)
 begin
     if(rst)
@@ -41,20 +41,20 @@ begin
         present_state<=next_state;
 end
 
-always@(clk_16x_cnt)//¸ù¾Ýµ±Ç°×´Ì¬»úµÄ×´Ì¬ºÍÅÐ¶ÏÌõ¼þ£¬¾ö¶¨×´Ì¬»úµÄÏÂÒ»¸ö×´Ì¬
+always@(clk_16x_cnt)//ï¿½ï¿½ï¿½Ýµï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
 begin
-    if(clk_16x_cnt<='d8)//Ð£ÑéÆðÊ¼Î»Ìõ¼þ
+    if(clk_16x_cnt<='d8)//Ð£ï¿½ï¿½ï¿½ï¿½Ê¼Î»ï¿½ï¿½ï¿½ï¿½
         next_state=idle;
-    if(clk_16x_cnt>'d8 && clk_16x_cnt <= 'd136)//½ÓÊÕ8Î»Êý¾ÝÌõ¼þ
+    if(clk_16x_cnt>'d8 && clk_16x_cnt <= 'd136)//ï¿½ï¿½ï¿½ï¿½8Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         next_state=one;
-    if(clk_16x_cnt>'d136 && clk_16x_cnt <= 'd152)//ÆæÅ¼Ð£ÑéÎ»Ìõ¼þ
+    if(clk_16x_cnt>'d136 && clk_16x_cnt <= 'd152)//ï¿½ï¿½Å¼Ð£ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
         next_state=two;
-    if(clk_16x_cnt>'d152 && clk_16x_cnt <= 'd168)//¼ìÑéÍ£Ö¹Î»Ìõ¼þ
+    if(clk_16x_cnt>'d152 && clk_16x_cnt <= 'd168)//ï¿½ï¿½ï¿½ï¿½Í£Ö¹Î»ï¿½ï¿½ï¿½ï¿½
         next_state=stop;
     if(clk_16x_cnt > 'd168)
         next_state=idle;
 end
-always@(posedge clk_16x)//¸ù¾Ýµ±Ç°×´Ì¬»úµÄ×´Ì¬£¬¾ö¶¨Êä³ö
+always@(posedge clk_16x)//ï¿½ï¿½ï¿½Ýµï¿½Ç°×´Ì¬ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 begin
     if(rst)
     begin
@@ -66,15 +66,15 @@ begin
     end
     else begin
         case(present_state)
-        idle: begin //¼ì²â¿ªÊ¼Î»
+        idle: begin //ï¿½ï¿½â¿ªÊ¼Î»
               rxd1<=rxd;
               rxd2<=rxd1;
-              if((~rxd1)&&rxd2)//¼ì²â¿ªÊ¼Î»£¬¿´rxdÊÇ·ñÓÉ¸ßµçÆ½Ìø±äµ½µÍµçÆ½
-                    start_flag<='d1;//µ±rxd1=0,rxd2=1Ê±£¬¸ßµçÆ½Ìø±äµ½µÍµçÆ½
+              if((~rxd1)&&rxd2)//ï¿½ï¿½â¿ªÊ¼Î»ï¿½ï¿½ï¿½ï¿½rxdï¿½Ç·ï¿½ï¿½É¸ßµï¿½Æ½ï¿½ï¿½ï¿½äµ½ï¿½Íµï¿½Æ½
+                    start_flag<='d1;//ï¿½ï¿½rxd1=0,rxd2=1Ê±ï¿½ï¿½ï¿½ßµï¿½Æ½ï¿½ï¿½ï¿½äµ½ï¿½Íµï¿½Æ½
               else if(start_flag==1)
                 clk_16x_cnt<=clk_16x_cnt+'d1;
             end
-         one: begin //½ÓÊÕ8Î»Êý¾Ý
+         one: begin //ï¿½ï¿½ï¿½ï¿½8Î»ï¿½ï¿½ï¿½ï¿½
                 clk_16x_cnt<=clk_16x_cnt + 'd1;
                 if(clk_16x_cnt=='d24)data_out[0]<=rxd;
                 else if(clk_16x_cnt=='d40)data_out[1]<=rxd;
@@ -85,11 +85,11 @@ begin
                 else if(clk_16x_cnt=='d120)data_out[6]<=rxd;
                 else if(clk_16x_cnt=='d136)data_out[7]<=rxd;
             end
-         two: begin//ÆæÅ¼Ð£ÑéÎ»
+         two: begin//ï¿½ï¿½Å¼Ð£ï¿½ï¿½Î»
                 if(clk_16x_cnt=='d152)
                 begin
-                    if(rxd_buf==rxd) data_error<=1'd0;//ÎÞ´íÎó
-                    else data_error<=1'd1;//ÓÐ´íÎó
+                    if(rxd_buf==rxd) data_error<=1'd0;//ï¿½Þ´ï¿½ï¿½ï¿½
+                    else data_error<=1'd1;//ï¿½Ð´ï¿½ï¿½ï¿½
                 end
                 clk_16x_cnt <= clk_16x_cnt+'d1;
             end
@@ -98,11 +98,11 @@ begin
                 begin
                     if(1'd1==rxd)
                     begin
-                        data_error<=1'd0;//ÎÞ´íÎó
+                        data_error<=1'd0;//ï¿½Þ´ï¿½ï¿½ï¿½
                         data_ready<='d1;
                     end
                     else begin
-                        data_error<=1'd1;//ÓÐ´íÎó
+                        data_error<=1'd1;//ï¿½Ð´ï¿½ï¿½ï¿½
                         data_ready<='d0;
                     end
                 end

@@ -27,7 +27,8 @@ module state_machine(
     input [4:0] button_total,
     input [3:0] detector,
     output reg [4:0] state,
-    output reg [31:0] cool
+    output reg [31:0] cool,
+    output reg auto_enable
     );
     wire clutch,throttle,brake,reverse;
     wire power_off_click;
@@ -47,17 +48,18 @@ module state_machine(
     wire mode_click;
     parameter
         rest = 5'b00000,
-        power_off = 5'b0XXXX,   //¹Ø»ú×´Ì¬ ¸Ã×´Ì¬ÏÂ³ı¼ì²âµ½µÄµçÔ´°´Å¥ÊäÈëÍâµÄËùÓĞ¼ì²âµ½µÄÊäÈëÎŞĞ§
+        power_off = 5'b0XXXX,   //å…³æœºçŠ¶æ€ è¯¥çŠ¶æ€ä¸‹é™¤æ£€æµ‹åˆ°çš„ç”µæºæŒ‰é’®è¾“å…¥å¤–çš„æ‰€æœ‰æ£€æµ‹åˆ°çš„è¾“å…¥æ— æ•ˆ
         manual = 5'b110XX,
-        manual_non_starting = 5'b11001,   //¿ª»úÄ¬ÈÏÄ£Ê½ ÊÖ¶¯¼İÊ»Ä£Ê½Î´Æô¶¯×´Ì¬ÎªÄ¬ÈÏ×´Ì¬ ¿ª»ú&ÊÖ¶¯&non-starting
-        manual_starting = 5'b11010,   //¿ª»ú&ÊÖ¶¯&starting
-        manual_moving = 5'b11011,   //¿ª»ú&ÊÖ¶¯&moving
+        manual_non_starting = 5'b11001,   //å¼€æœºé»˜è®¤æ¨¡å¼ æ‰‹åŠ¨é©¾é©¶æ¨¡å¼æœªå¯åŠ¨çŠ¶æ€ä¸ºé»˜è®¤çŠ¶æ€ å¼€æœº&æ‰‹åŠ¨&non-starting
+        manual_starting = 5'b11010,   //å¼€æœº&æ‰‹åŠ¨&starting
+        manual_moving = 5'b11011,   //å¼€æœº&æ‰‹åŠ¨&moving
         semi = 5'b101XX,
-        semi_waiting = 5'b10100,        //¿ª»ú °ë×Ô¶¯waiting
-        semi_turning_left = 5'b10101,        //¿ª»ú °ë×Ô¶¯×ó×ª
-        semi_turning_right = 5'b10110,        //¿ª»ú °ë×Ô¶¯ÓÒ×ª
-        semi_moving_forward = 5'b10111,        //¿ª»ú °ë×Ô¶¯Ö±ĞĞ
-        
+        semi_waiting = 5'b10100,        //å¼€æœº åŠè‡ªåŠ¨waiting
+        semi_turning_left = 5'b10101,        //å¼€æœº åŠè‡ªåŠ¨å·¦è½¬
+        semi_turning_right = 5'b10110,        //å¼€æœº åŠè‡ªåŠ¨å³è½¬
+        semi_moving_forward = 5'b10111,        //å¼€æœº åŠè‡ªåŠ¨ç›´è¡Œ
+        auto = 5'b111XX,
+        auto_init = 5'b11100,
         turn_sec = 32'o504177500,
         turn_back_sec = 32'o1142264000,
         forward_sec = 32'o344703400,
@@ -69,18 +71,19 @@ module state_machine(
     assign reverse = switch_total[0];
     reg isCross,needLeft,needRight,needBack;
     reg turning_back;
+    
     always @(posedge clk) begin
         casex(detector)
             4'b0X00 , 4'b0X10 , 4'b0X01 , 4'b1X00:
             begin
-                isCross=1;
+                isCross = 1;
                 needLeft = 0;
                 needRight = 0;
                 needBack = 0;
             end
             4'b1X01:
             begin
-                isCross=0;
+                isCross = 0;
                 needLeft = 1;
                 needRight = 0;
                 needBack = 0;
@@ -88,21 +91,21 @@ module state_machine(
             end
             4'b1X10:
             begin
-                isCross   =0;
+                isCross   = 0;
                 needLeft = 0;
                 needRight = 1;
                 needBack = 0;
             end
             4'b1011:
             begin
-                isCross   =0;
+                isCross   = 0;
                 needLeft = 0;
                 needRight = 0;
                 needBack = 1;
             end
             default:
             begin
-                isCross   =0;
+                isCross   = 0;
                 needLeft = 0;
                 needRight = 0;
                 needBack = 0;
@@ -111,24 +114,24 @@ module state_machine(
     end
 
     click_detector on_power_off_click(
-            .clk(clk),
-            .button(button_total[3]),
-            .button_click(power_off_click)
+        .clk(clk),
+        .button(button_total[3]),
+        .button_click(power_off_click)
     );
     click_detector on_front_click(
-                .clk(clk),
-                .button(button_total[2]),
-                .button_click(front_click)
+        .clk(clk),
+        .button(button_total[2]),
+        .button_click(front_click)
     );
     click_detector on_left_click(
-                .clk(clk),
-                .button(button_total[1]),
-                .button_click(left_click)
+        .clk(clk),
+        .button(button_total[1]),
+        .button_click(left_click)
     );
     click_detector on_right_click(
-                .clk(clk),
-                .button(button_total[0]),
-                .button_click(right_click)
+        .clk(clk),
+        .button(button_total[0]),
+        .button_click(right_click)
     );
     
     click_detector on_mode_click(
@@ -150,7 +153,7 @@ module state_machine(
                 power_off:
                 begin
                     if(power) begin
-                        if (init == 29'o2170321400) begin
+                        if (init == 29'd300_000_000) begin
                             state <= manual_non_starting;
                             init <=0;
                         end else begin
@@ -165,7 +168,7 @@ module state_machine(
                 //----------------------------------------------------
                 manual_non_starting:
                 begin
-                     if (mode_click) begin
+                    if (mode_click) begin
                         state <= semi_waiting;
                     end
                     else if (~clutch & (throttle|(last_reverse != reverse ))) begin
@@ -229,32 +232,32 @@ module state_machine(
                  //----------------------------------------------------
                  //----------------------------------------------------
                  //----------------------------------------------------                 
-                 semi_waiting:
-                 begin
-                    if (mode_click) begin
-                        state <= manual_non_starting;
-                    end
-                    else  if (front_click) begin
-                        semi_cnt <= 0;
-                        cool  <= 0;
-                        state <= semi_moving_forward;
-                    end
-                    else if (left_click) begin
-                        semi_cnt <= 0;
-                        cool  <= 0;
-                        state <= semi_turning_left;
-                    end
-                    else if (right_click) begin
-                        semi_cnt <= 0;
-                        turning_back  = 0;
-                        cool  <= 0;
-                        state <= semi_turning_right;
-                    end
-                    else begin
-                        state <= semi_waiting;
-                    end
-                 end
-                 //----------------------------------------------------
+                semi_waiting:
+                begin
+                if (mode_click) begin
+                    state <= auto_init;
+                end
+                else  if (front_click) begin
+                    semi_cnt <= 0;
+                    cool  <= 0;
+                    state <= semi_moving_forward;
+                end
+                else if (left_click) begin
+                    semi_cnt <= 0;
+                    cool  <= 0;
+                    state <= semi_turning_left;
+                end
+                else if (right_click) begin
+                    semi_cnt <= 0;
+                    turning_back  = 0;
+                    cool  <= 0;
+                    state <= semi_turning_right;
+                end
+                else begin
+                    state <= semi_waiting;
+                end
+                end
+                //----------------------------------------------------
                 semi_moving_forward:
                 begin
                     if (cool > 0 ) begin
@@ -317,14 +320,7 @@ module state_machine(
                             turning_back  = 0;
                             state <= semi_turning_right;
                         end
-//                        else if (needBack) begin
-//                            semi_cnt = 0;
-//                            cool = cool_sec;
-//                            turning_back  = 1;
-//                            state <= semi_turning_right;
-//                        end
                     end
-                    
                     else begin
                         if (semi_cnt < turn_sec) begin
                             semi_cnt = semi_cnt + 1;
@@ -352,6 +348,8 @@ module state_machine(
                         end
                         else if (needLeft) begin
                             semi_cnt = 0;
+
+                            
                             state <= semi_turning_left;
                         end
                         else if (needRight) begin
@@ -380,13 +378,25 @@ module state_machine(
                         end
                     end
                 end
-                 //----------------------------------------------------
+                //----------------------------------------------------
+                //----------------------------------------------------
+                //----------------------------------------------------
+                auto:
+                begin
+                    auto_enable <= 1;
+                    state <= state;
+                    if (mode_click) begin
+                        auto_enable <= 0;
+                        state <= manual_non_starting;
+                    end
+                end
                 default: 
                 begin
                     init <= init;
                     state <= state;
+                    auto_enable <= auto_enable;
                 end
-            endcase                                                                 //ÆäËûÇé¿ö²»±ä
+            endcase                                                                 //å…¶ä»–æƒ…å†µä¸å˜
         end
     end
 endmodule

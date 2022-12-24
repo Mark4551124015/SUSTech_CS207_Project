@@ -25,7 +25,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module clk_module(input clk, reset, enable, output reg clk_out);
-    parameter period = 50_000_000;
+    parameter frequency = 2;        //herZ
+    parameter period = 100_000_000 / frequency;
     reg [31:0] cnt;
     always@(posedge clk, posedge reset) begin
         if (reset) begin
