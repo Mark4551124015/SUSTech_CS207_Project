@@ -24,41 +24,38 @@ module car(
     input rx, //bind to N5 pin
     output tx, //bind to T4 pin
     input rst, //reset button
-    // 按键
-    input power_button,          //电源开关按钮       按键
-    input power_off,                //电源开关按钮       按键
+    // Button
+    input power_button,          
+    input power_off,                
 
-    input front_button,           //前进按钮       
-    input left_button,           //左转按钮           按键S3
-    input right_button,          //右转按钮           按键S0
-    // 开关
-    input clutch,                //离合开关           SW7
-    input throttle,              //油门开关           SW6
-    input brake,                 //刹车开关           SW5
-    input reverse,               //倒挡开关           SW4
-    // 显示灯
-    output power_state,           //电源状态显示灯      LED灯D1_0
-    output[1:0] driving_mode,     //驾驶模式显示灯      LED灯D1_1、D1_2
-    output[1:0] car_state,        //汽车状态显示灯      LED灯D1_3、D1_4
-    output clutch_show,           //离合显示灯         LED灯D2_7
-    output throttle_show,         //油门显示灯         LED灯D2_6
-    output break_show,            //刹车显示灯         LED灯D2_5
-    output reverse_show,          //倒挡显示灯         LED灯D2_4
-    output reverse_mode,          //倒挡显示灯         LED灯D2_4
-    output [1:0] turning_show,      //转向显示灯         LED灯D1_5、LED灯D1_6
-//    output[6:0] journey_show       //行程显示
-    output [7:0] seg_en,        // 8 个流水灯开关 
-    output [7:0] seg_out0,      // 前 4 个流水灯输出
-    output [7:0] seg_out1,       // 后 4 个流水灯输出
+    input front_button,           
+    input left_button,           
+    input right_button,          
+    // Switch
+    input clutch,                
+    input throttle,              
+    input brake,                 
+    input reverse,               
+    // Light
+    output power_state,           
+    output[1:0] driving_mode,     
+    output[1:0] car_state,        
+    output clutch_show,         
+    output throttle_show,         
+    output break_show,           
+    output reverse_show,         
+    output reverse_mode,          
+    output [1:0] turning_show,     
+
+    output [7:0] seg_en,
+    output [7:0] seg_out0,
+    output [7:0] seg_out1,
     output [3:0] detector_show
 );
 wire clk;
-//从左往右，分别代表离合开关、油门开关、刹车开关、倒档开关，1代表开关打开，0代表开关关闭。
-wire[3:0] switch_total = {clutch,throttle,brake,reverse};//开关总状态
-//从左往右，第一位代表电源按键，二位代表驾驶模式选择按键，三四位代表左右转按键。
-wire[4:0] button_total = {power_button,power_off,front_button,left_button,right_button};//按键总状态
+wire[3:0] switch_total = {clutch,throttle,brake,reverse};
+wire[4:0] button_total = {power_button,power_off,front_button,left_button,right_button};
 wire[4:0] state;
-
 
 wire move_forward_signal;
 wire move_backward_signal;
@@ -80,7 +77,6 @@ wire [3:0] detector = {front_detector,back_detector,left_detector,right_detector
 assign reverse_mode = reverse_show;
 assign clk = sys_clk;
 assign detector_show  = auto_state;
-
 
 state_machine state_machine(
     .clk(clk),
@@ -156,6 +152,5 @@ SimulatedDevice simulated_device(
     .left_detector(right_detector),
     .right_detector(back_detector)
 );
-
 
 endmodule
