@@ -53,9 +53,9 @@ module car(
     output [3:0] detector_show,
 
     // VGA
-    output [2:0] r,
-    output [2:0] g,
-    output [1:0] b,
+    output [3:0] r,
+    output [3:0] g,
+    output [3:0] b,
     output hs,
     output vs
 );
