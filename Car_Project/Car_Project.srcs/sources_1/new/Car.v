@@ -25,8 +25,8 @@ module car(
     output tx, //bind to T4 pin
     input rst, //reset button
     // 按键
-    input power_button,          //电源开关按钮       按键S2
-    input power_off,                //电源开关按钮       按键S2
+    input power_button,          //电源开关按钮       按键
+    input power_off,                //电源开关按钮       按键
 
     input front_button,           //前进按钮       
     input left_button,           //左转按钮           按键S3
