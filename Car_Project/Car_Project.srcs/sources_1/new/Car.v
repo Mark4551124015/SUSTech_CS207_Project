@@ -51,6 +51,13 @@ module car(
     output [7:0] seg_out0,
     output [7:0] seg_out1,
     output [3:0] detector_show
+
+    // VGA
+    output [2:0] r,
+    output [2:0] g,
+    output [1:0] b,
+    output hs,
+    output vs
 );
 wire clk;
 wire[3:0] switch_total = {clutch,throttle,brake,reverse};
@@ -72,6 +79,7 @@ wire right_detector;
 wire reset;
 wire mode = ~rst;
 wire [31:0] cool;
+wire [23:0] record;
 wire auto_enable = state[3]&state[2];
 wire [3:0] detector = {front_detector,back_detector,left_detector,right_detector};
 assign reverse_mode = reverse_show;
@@ -129,6 +137,7 @@ lighting_module lighting_module(
 record_module record_module(
     .clk(clk),
     .state(state),
+    .record(record),
     .seg_en(seg_en),    
     .seg_out0(seg_out0),  
     .seg_out1(seg_out1),
@@ -136,6 +145,16 @@ record_module record_module(
     .move_backward_signal(move_backward_signal)
 );
 
+vga_module vga_module(
+    .clk(clk),
+    .state(state),
+    .record(record),
+    .r(r),
+    .g(g),
+    .b(b),
+    .hs(hs),
+    .vs(vs)
+);
 
 SimulatedDevice simulated_device(
     .sys_clk(sys_clk),
