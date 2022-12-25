@@ -50,7 +50,7 @@ module car(
     output [7:0] seg_en,
     output [7:0] seg_out0,
     output [7:0] seg_out1,
-    output [3:0] detector_show
+    output [3:0] detector_show,
 
     // VGA
     output [2:0] r,
