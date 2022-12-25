@@ -1,28 +1,28 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
+// Company:
+// Engineer:
+//
 // Create Date: 2022/12/22 10:12:12
-// Design Name: 
+// Design Name:
 // Module Name: number_to_seg_module
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
+// Project Name:
+// Target Devices:
+// Tool Versions:
+// Description:
+//
+// Dependencies:
+//
 // Revision:
 // Revision 0.01 - File Created
 // Additional Comments:
-// 
+//
 //////////////////////////////////////////////////////////////////////////////////
 
 
 module number_to_seg_module(input [3:0] number,
-             input reset,
-             output reg [7:0] seg_out);
+                            input reset,
+                            output reg [7:0] seg_out);
 always@(number, reset) begin
     if (reset) begin
         seg_out <= 8'b0000_0000;
