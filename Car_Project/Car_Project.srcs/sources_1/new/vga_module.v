@@ -324,7 +324,7 @@ vga_num_ram_module number_0(
 		if (rst)
 			begin
 				r <= 4'b0000;
-				g <= 4'b0000;
+				g <= 4'b1111;
 				b <= 4'b0000;
 			end
 		else if (vcount>=UP_BOUND && vcount<=DOWN_BOUND && hcount>=LEFT_BOUND && hcount<=RIGHT_BOUND)
@@ -334,27 +334,27 @@ vga_num_ram_module number_0(
 				if (p[hcount-left_pos][vcount-up_pos])
 					begin
 						r <= 4'b1111;
-						g <= 4'b1111;
-						b <= 4'b1111;
+						g <= 4'b0000;
+						b <= 4'b0000;
 					end
 				else 
 					begin
 						r <= 4'b0000;
-						g <= 4'b0000;
+						g <= 4'b1111;
 						b <= 4'b0000;
 					end
 				end
 			else 
 				begin
 					r <= 4'b0000;
-					g <= 4'b0000;
+					g <= 4'b1111;
 					b <= 4'b0000;
 				end
 			end
 		else 
 		begin
 			r <= 4'b0000;
-			g <= 4'b0000;
+			g <= 4'b1111;
 			b <= 4'b0000;
 		end
 	end
