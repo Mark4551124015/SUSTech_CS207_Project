@@ -26,6 +26,7 @@ module record_module(
     input [4:0] state,
     input move_forward_signal,
     input move_backward_signal,
+    output reg [23:0] record,
     output reg [7:0] seg_en, // enables of 8 lights
     output [7:0] seg_out0,   // output of first 4 lights
     output [7:0] seg_out1
