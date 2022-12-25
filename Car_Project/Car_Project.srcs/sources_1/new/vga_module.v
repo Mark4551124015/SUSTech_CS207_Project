@@ -6,9 +6,9 @@ module vga_module(
 	input [4:0] state,
 	input [23:0] record,
 
-    output reg [2:0] r,
-    output reg [2:0] g,
-    output reg [1:0] b,
+    output reg [3:0] r,
+    output reg [3:0] g,
+    output reg [3:0] b,
     output hs,
     output vs
     );
@@ -19,7 +19,7 @@ module vga_module(
 	parameter LEFT_BOUND = 144;
 	parameter RIGHT_BOUND = 783;
 
-	// 显示字符左上角位�?
+	// 显示字符左上角位�?
 	parameter up_pos = 267;
 	parameter down_pos = 274;
 	parameter left_pos = 415;
@@ -289,7 +289,7 @@ vga_num_ram_module number_0(
 			count <= count+1;
 	end
 	
-	// 列计数与行同�?
+	// 列计数与行同�?
 	assign hs = (hcount < 96) ? 0 : 1;
 	always @ (posedge pclk or posedge rst)
 	begin
@@ -301,7 +301,7 @@ vga_num_ram_module number_0(
 			hcount <= hcount+1;
 	end
 	
-	// 行计数与场同�?
+	// 行计数与场同�?
 	assign vs = (vcount < 2) ? 0 : 1;
 	always @ (posedge pclk or posedge rst)
 	begin
@@ -318,14 +318,14 @@ vga_num_ram_module number_0(
 			vcount <= vcount;
 	end
 	
-	// 设置显示信号�?
+	// 设置显示信号�?
 	always @ (posedge pclk or posedge rst)
 	begin
 		if (rst)
 			begin
-				r <= 0;
-				g <= 0;
-				b <= 0;
+				r <= 4'b0000;
+				g <= 4'b0000;
+				b <= 4'b0000;
 			end
 		else if (vcount>=UP_BOUND && vcount<=DOWN_BOUND && hcount>=LEFT_BOUND && hcount<=RIGHT_BOUND)
 			begin
@@ -333,29 +333,29 @@ vga_num_ram_module number_0(
 				begin
 				if (p[hcount-left_pos][vcount-up_pos])
 					begin
-						r <= 3'b111;
-						g <= 3'b111;
-						b <= 2'b11;
+						r <= 4'b1111;
+						g <= 4'b1111;
+						b <= 4'b1111;
 					end
 				else 
 					begin
-						r <= 3'b000;
-						g <= 3'b000;
-						b <= 2'b00;
+						r <= 4'b0000;
+						g <= 4'b0000;
+						b <= 4'b0000;
 					end
 				end
 			else 
 				begin
-					r <= 3'b000;
-					g <= 3'b000;
-					b <= 2'b00;
+					r <= 4'b0000;
+					g <= 4'b0000;
+					b <= 4'b0000;
 				end
 			end
 		else 
 		begin
-			r <= 3'b000;
-			g <= 3'b000;
-			b <= 2'b00;
+			r <= 4'b0000;
+			g <= 4'b0000;
+			b <= 4'b0000;
 		end
 	end
 endmodule
