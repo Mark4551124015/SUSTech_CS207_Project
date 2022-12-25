@@ -33,14 +33,19 @@ module auto_module(
     reg moveBack;
     reg turnRight;
     reg turnLeft;
-    assign auto_move = {moveForward, moveBack, turnLeft, turnRight};
-    reg [51:0] time_limit;
-    reg [31:0] placeB_cnt;
-    reg [31:0] turn_cnt;
+    assign auto_move = {moveForward, moveBack, turnLeft, turnRight};    //debug输出auto姿态
+    reg [51:0] time_limit;  
+    reg [31:0] placeB_cnt;  
+
+    reg [31:0] turn_cnt;    //转弯时间
+
+
+    //检测有无墙
     wire front_d = detector[3];
     wire back_d = detector[2];
     wire left_d = detector[1];
     wire right_d = detector[0];
+
     wire clk_50hz;
     reg last_enable;
     
@@ -59,27 +64,34 @@ module auto_module(
         auto_placeB = 5'b00101,
         auto = 5'b111XX,
 
-        turn_sec = 32'd85_000_000,
-        turn_back_sec = 32'd180_000_000,
-        forward_sec = 32'd2_000_000,
-        cool_sec = 32'd10_000_000,
-        rest_sec = 32'd5_000_000,
-        place_Barrier_sec = 32'd250_000_000,
+        turn_sec = 32'd85_000_000,          //转90度时间
+        turn_back_sec = 32'd180_000_000,    //转180度时间
+        forward_sec = 32'd50_000_000,       //前进走出路口时间
+        cool_sec = 32'd10_000_000,          //完成转向后回正时间
+        rest_sec = 32'd5_000_000,           //detector延迟
+
+        place_Barrier_sec = 32'd250_000_000,    
         place_Barrier_sec_half = 32'd85_000_000,
-        buffer_sec = 32'd2_100_000,
+
+        buffer_sec = 32'd2_100_000,                 //放路标所需持续时间
+        max_right = 5'd5,                           //改成depth
         destroy_timelimit = 33'd6_000_000_000;
 
-    reg [5:0] lastState;
-    reg [31:0] rest;
+    reg [4:0] auto_state; 
+    reg [5:0] lastState;                            
+    reg [31:0] rest;        
     reg [31:0] cool;
     reg [31:0] forward_cnt;
-    reg [31:0] buffer = 0;
-    reg [4:0] auto_state; 
+    reg [31:0] buffer;
+
     reg [32:0] destroyCnt;
-    assign auto_state_out = {isCross, needLeft, needRight, needBack};
+    reg [5:0] turn_right_cnt;
+    reg needBarrier;
+    assign auto_state_out = {isCross, needLeft, needRight, needBack};   //debug
+
     always @(posedge clk_50hz) begin
         casex(detector)
-            4'bXX00:            //left & right
+            4'bXX00:            //left & right      
             begin
                 isCross = ~detector[2];
                 needLeft = 0;
@@ -173,12 +185,25 @@ module auto_module(
                                         turnRight <= 0;
                                     end
                                     else if (needRight) begin
-                                        turn_cnt <= turn_sec;
-                                        auto_state <= auto_turn_right;
-                                        moveForward <= 0;
-                                        moveBack <= 0;
-                                        turnLeft <= 0;
-                                        turnRight <= 0;
+                                        if (turn_right_cnt == 0) begin
+                                            turn_right_cnt = max_right;
+                                            needBarrier = 1;
+                                            turn_cnt <= turn_back_sec;
+                                            auto_state <= auto_turn_right;
+                                            moveForward <= 0;
+                                            moveBack <= 0;
+                                            turnLeft <= 0;
+                                            turnRight <= 0;
+                                        end
+                                        else begin 
+                                            turn_right_cnt = turn_right_cnt - 1;
+                                            turn_cnt <= turn_sec;
+                                            auto_state <= auto_turn_right;
+                                            moveForward <= 0;
+                                            moveBack <= 0;
+                                            turnLeft <= 0;
+                                            turnRight <= 0;
+                                        end
                                     end
                                     else if (needBack) begin
                                         turn_cnt <= turn_back_sec;
@@ -199,27 +224,56 @@ module auto_module(
                                     // end
                                 end
                                 else begin                              // 路口先标来的地方再转向 Turn after place the barrier
-                                    placeB_cnt <= place_Barrier_sec;
+                                    // placeB_cnt <= place_Barrier_sec;
+                                    // turn_right_cnt = max_right;
+                                    // if (needLeft) begin
+                                    //     turn_cnt <= turn_sec;
+                                    //     auto_state <= auto_placeB;
+                                    //     lastState <= auto_turn_left;
+                                    // end
+                                    // else if (needRight) begin
+                                    //     turn_cnt <= turn_sec;
+                                    //     auto_state <= auto_placeB;
+                                    //     lastState <= auto_turn_right;
+                                    // end
+                                    // else if (needBack) begin
+                                    //     turn_cnt <= turn_back_sec;
+                                    //     auto_state <= auto_placeB;
+                                    //     lastState <= auto_turn_right;
+                                    // end
+                                    // else begin
+                                    //     forward_cnt = forward_sec;
+                                    //     auto_state <= auto_placeB;
+                                    //     lastState <= auto_forward;
+                                    //     rest = rest_sec;
+                                    // end
                                     if (needLeft) begin
                                         turn_cnt <= turn_sec;
-                                        auto_state <= auto_placeB;
-                                        lastState <= auto_turn_left;
+                                        auto_state <= auto_turn_left;
+                                        moveForward <= 0;
+                                        moveBack <= 0;
+                                        turnLeft <= 0;
+                                        turnRight <= 0;
                                     end
                                     else if (needRight) begin
                                         turn_cnt <= turn_sec;
-                                        auto_state <= auto_placeB;
-                                        lastState <= auto_turn_right;
+                                        auto_state <= auto_turn_right;
+                                        moveForward <= 0;
+                                        moveBack <= 0;
+                                        turnLeft <= 0;
+                                        turnRight <= 0;
                                     end
                                     else if (needBack) begin
                                         turn_cnt <= turn_back_sec;
-                                        auto_state <= auto_placeB;
-                                        lastState <= auto_turn_right;
+                                        auto_state <= auto_turn_right;
+                                        moveForward <= 0;
+                                        moveBack <= 0;
+                                        turnLeft <= 0;
+                                        turnRight <= 0;
                                     end
-                                    else begin
-                                        forward_cnt = forward_sec;
-                                        auto_state <= auto_placeB;
-                                        lastState <= auto_forward;
-                                        rest = rest_sec;
+                                    if (needBarrier) begin
+                                        placeBarrier = 1;
+                                        needBarrier = 0;
                                     end
                                 end
                             end
@@ -281,30 +335,30 @@ module auto_module(
                         end
                     end 
                 end
-                auto_placeB: begin
-                    if (placeB_cnt > place_Barrier_sec_half) begin
-                        moveForward <= 0;
-                        moveBack <= 1;
-                        turnLeft <= 0;
-                        turnRight <= 0;
-                        placeB_cnt = placeB_cnt -1;
-                    end
-                    else if (placeB_cnt == place_Barrier_sec_half) begin
-                        placeBarrier = 1;
-                        buffer = buffer_sec;
-                        placeB_cnt = placeB_cnt -1;
-                    end 
-                    else if (placeB_cnt > 0) begin
-                        moveForward <= 1;
-                        moveBack <= 0;
-                        turnLeft <= 0;
-                        turnRight <= 0;
-                        placeB_cnt = placeB_cnt - 1;
-                    end 
-                    else begin
-                        auto_state <= lastState;
-                    end
-                end
+                // auto_placeB: begin
+                //     if (placeB_cnt > place_Barrier_sec_half) begin
+                //         moveForward <= 0;
+                //         moveBack <= 1;
+                //         turnLeft <= 0;
+                //         turnRight <= 0;
+                //         placeB_cnt = placeB_cnt -1;
+                //     end
+                //     else if (placeB_cnt == place_Barrier_sec_half) begin
+                //         placeBarrier = 1;
+                //         buffer = buffer_sec;
+                //         placeB_cnt = placeB_cnt -1;
+                //     end 
+                //     else if (placeB_cnt > 0) begin
+                //         moveForward <= 1;
+                //         moveBack <= 0;
+                //         turnLeft <= 0;
+                //         turnRight <= 0;
+                //         placeB_cnt = placeB_cnt - 1;
+                //     end 
+                //     else begin
+                //         auto_state <= lastState;
+                //     end
+                // end
                 default:
                 begin
                     auto_state = auto_state;

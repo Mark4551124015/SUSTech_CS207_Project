@@ -28,7 +28,8 @@ module record_module(
     input move_backward_signal,
     output reg [7:0] seg_en, // enables of 8 lights
     output [7:0] seg_out0,   // output of first 4 lights
-    output [7:0] seg_out1);
+    output [7:0] seg_out1
+    );
     
     
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
