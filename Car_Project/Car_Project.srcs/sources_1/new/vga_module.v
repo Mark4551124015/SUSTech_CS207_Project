@@ -16,7 +16,7 @@ module vga_module(input clk,
     parameter LEFT_BOUND  = 144;
     parameter RIGHT_BOUND = 783;
     
-    // 显示字符左上角位�???
+    // 显示字符左上角位�??
     parameter up_pos    = 267;
     parameter down_pos  = 274;
     parameter left_pos  = 415;
@@ -286,7 +286,7 @@ module vga_module(input clk,
             count <= count+1;
     end
     
-    // 列计数与行同�???
+    // 列计数与行同�??
     assign hs = (hcount < 96) ? 0 : 1;
     always @ (posedge pclk or posedge rst)
     begin
@@ -298,7 +298,7 @@ module vga_module(input clk,
             hcount <= hcount+1;
     end
     
-    // 行计数与场同�???
+    // 行计数与场同�??
     assign vs = (vcount < 2) ? 0 : 1;
     always @ (posedge pclk or posedge rst)
     begin
@@ -315,7 +315,7 @@ module vga_module(input clk,
             vcount <= vcount;
     end
     
-    // 设置显示信号�???
+    // 设置显示信号�??
     always @ (posedge pclk or posedge rst)
     begin
         if (rst)
@@ -324,9 +324,9 @@ module vga_module(input clk,
             g <= 4'b1111;
             b <= 4'b0000;
         end
-        else if (vcount>= UP_BOUND && vcount<= DOWN_BOUND && hcount>= LEFT_BOUND && hcount<= RIGHT_BOUND)
+        else if (vcount> = UP_BOUND && vcount< = DOWN_BOUND && hcount> = LEFT_BOUND && hcount< = RIGHT_BOUND)
         begin
-            if (vcount>= up_pos && vcount<= down_pos && hcount>= left_pos && hcount<= right_pos)
+            if (vcount> = up_pos && vcount< = down_pos && hcount> = left_pos && hcount< = right_pos)
             begin
                 if (p[hcount-left_pos][vcount-up_pos])
                 begin

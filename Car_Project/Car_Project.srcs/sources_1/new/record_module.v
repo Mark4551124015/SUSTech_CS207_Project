@@ -73,7 +73,7 @@ module record_module(input clk,
             seg_state <= 4'b1000;
         end
         else begin
-            if (seg_state != 4'b0001)
+            if (seg_state ! = 4'b0001)
                 seg_state <= seg_state >> 1;
             else
                 seg_state <= 4'b1000;

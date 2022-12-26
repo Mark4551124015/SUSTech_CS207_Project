@@ -38,7 +38,7 @@ module auto_module(input clk,
     reg [31:0] turn_cnt;    //转弯时间
     
     
-    //�??????测有无墙
+    //�???测有无墙
     wire front_d = detector[3];
     wire back_d  = detector[2];
     wire left_d  = detector[1];
@@ -62,8 +62,8 @@ module auto_module(input clk,
     auto_placeB = 5'b00101,
     auto = 5'b111XX,
     
-    turn_sec = 32'd85_000_000,          //转向90度时�???
-    turn_back_sec = 32'd180_000_000,    //转向180度时�???
+    turn_sec = 32'd85_000_000,          //�???90度时�???
+    turn_back_sec = 32'd180_000_000,    //�???180度时�???
     forward_sec = 32'd50_000_000,       //前进走出路口时间
     cool_sec = 32'd10_000_000,          //完成转向后回正时�???
     rest_sec = 32'd5_000_000,           //detector延迟
@@ -71,8 +71,8 @@ module auto_module(input clk,
     place_Barrier_sec = 32'd250_000_000,
     place_Barrier_sec_half = 32'd85_000_000,
     
-    buffer_sec = 32'd2_100_000,                 //放路标所持续时间
-    depth = 1'd8,                           //改成depth
+    buffer_sec = 32'd2_100_000,                 //放路标所�???持续时间
+    max_right = 5'd5,                           //改成depth
     destroy_timelimit = 33'd6_000_000_000;
     
     reg [4:0] auto_state;
@@ -89,14 +89,7 @@ module auto_module(input clk,
     
     always @(posedge clk_50hz) begin
         casex(detector)
-            4'b0X00:            //left & right & front
-            begin
-                isCross   = 1;
-                needLeft  = 0;
-                needRight = 1;
-                needBack  = 0;
-            end
-            4'b1X00:            //left & right
+            4'bXX00:            //left & right
             begin
                 isCross   = ~detector[2];
                 needLeft  = 0;
@@ -180,7 +173,7 @@ module auto_module(input clk,
                             turnRight   <= 0;
                         end
                         else begin
-                            if (~isCross)begin                      // 非路口直接转�?????? Turn directly if not Cross
+                            if (~isCross)begin                      // 非路口直接转�??? Turn directly if not Cross
                                 if (needLeft) begin
                                     turn_cnt    <= turn_sec;
                                     auto_state  <= auto_turn_left;
@@ -228,7 +221,7 @@ module auto_module(input clk,
                                     //     rest = rest_sec;
                                 // end
                             end
-                            else begin                              // 路口先标来的地方再转�?????? Turn after place the barrier
+                            else begin                              // 路口先标来的地方再转�??? Turn after place the barrier
                                 // placeB_cnt <= place_Barrier_sec;
                                 // turn_right_cnt = max_right;
                                 // if (needLeft) begin
