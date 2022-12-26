@@ -12,21 +12,22 @@ module vga_module(
     output hs,
     output vs
     );
+	
+	//parameter define  
+	parameter  H_SYNC   =  10'd96;    //行同�?
+	parameter  H_BACK   =  10'd48;    //行显示后�?
+	parameter  H_DISP   =  10'd640;   //行有效数�?
+	parameter  H_FRONT  =  10'd16;    //行显示前�?
+	parameter  H_TOTAL  =  10'd800;   //行扫描周�?
+	
+	parameter  V_SYNC   =  10'd2;     //场同�?
+	parameter  V_BACK   =  10'd33;    //场显示后�?
+	parameter  V_DISP   =  10'd480;   //场有效数�?
+	parameter  V_FRONT  =  10'd10;    //场显示前�?
+	parameter  V_TOTAL  =  10'd525;   //场扫描周�?
 
-	// 显示器可显示区域
-	parameter UP_BOUND = 31;
-	parameter DOWN_BOUND = 510;
-	parameter LEFT_BOUND = 144;
-	parameter RIGHT_BOUND = 783;
-
-	// 显示字符左上角位�?
-	parameter up_pos = 267;
-	parameter down_pos = 274;
-	parameter left_pos = 415;
-	parameter right_pos = 512;
-
-	wire pclk;
-	reg [1:0] count;
+	reg vga_clk = 0;
+	reg cnt_clk = 0;
 	reg [9:0] hcount, vcount;
 	wire [7:0] p[97:0];
 	reg [3:0] num0, num1, num2, num3, num4, num5, num6;
@@ -280,46 +281,52 @@ vga_num_ram_module number_0(
 	.col6(p[97])
 );
 	// 获得像素时钟25MHz
-	assign pclk = count[1];
-	always @ (posedge clk or posedge rst)
+	always@(posedge clk)
 	begin
-		if (rst)
-			count <= 0;
+		if(cnt_clk == 1)
+		begin
+			vga_clk <= ~vga_clk;
+			cnt_clk <= 0;
+		end
 		else
-			count <= count+1;
+			cnt_clk <= cnt_clk + 1;
+	end   
+	
+	//VGA行场同步信号
+	assign hs = (hcount <= H_SYNC - 1'b1) ? 1'b0 : 1'b1;
+	assign vs = (vcount <= V_SYNC - 1'b1) ? 1'b0 : 1'b1;
+
+
+	//行计数器对像素时钟计�?
+	always @ (posedge vga_clk or posedge rst)
+        begin
+            if (rst)
+                hcount <= 0;
+            else begin
+                if(hcount < H_TOTAL - 1'b1)
+                    hcount <= hcount + 1'b1;
+                else
+                    hcount <= 0;
+        end
 	end
 	
-	// 列计数与行同�?
-	assign hs = (hcount < 96) ? 0 : 1;
-	always @ (posedge pclk or posedge rst)
-	begin
-		if (rst)
-			hcount <= 0;
-		else if (hcount == 799)
-			hcount <= 0;
-		else
-			hcount <= hcount+1;
-	end
-	
-	// 行计数与场同�?
-	assign vs = (vcount < 2) ? 0 : 1;
-	always @ (posedge pclk or posedge rst)
+	//场计数器对行计数
+	always @ (posedge vga_clk or posedge rst)
 	begin
 		if (rst)
 			vcount <= 0;
-		else if (hcount == 799) 
+		else 
+			if (hcount == H_TOTAL - 1'b1) 
 			begin
-				if (vcount == 520)
-					vcount <= 0;
+				if (vcount < V_TOTAL - 1'b1)
+					vcount <= vcount + 1'b1;
 				else
-					vcount <= vcount+1;
+					vcount <= 0;
 			end
-		else
-			vcount <= vcount;
 	end
 	
-	// 设置显示信号�?
-	always @ (posedge pclk or posedge rst)
+	// 设置显示信号�??
+	always @ (posedge vga_clk or posedge rst)
 	begin
 		if (rst)
 			begin
@@ -327,11 +334,11 @@ vga_num_ram_module number_0(
 				g <= 4'b1111;
 				b <= 4'b0000;
 			end
-		else if (vcount>=UP_BOUND && vcount<=DOWN_BOUND && hcount>=LEFT_BOUND && hcount<=RIGHT_BOUND)
+		else if (vcount >= V_SYNC+V_BACK && vcount < V_SYNC+V_BACK+V_DISP && hcount >= H_SYNC+H_BACK && hcount < H_SYNC+H_BACK+H_DISP)
 			begin
-			if (vcount>=up_pos && vcount<=down_pos && hcount>=left_pos && hcount<=right_pos)
+			if (vcount >= V_SYNC+V_BACK && vcount < V_SYNC+V_BACK+V_DISP&& hcount >= H_SYNC+H_BACK-1'b1 && hcount < H_SYNC+H_BACK+H_DISP-1'b1)
 				begin
-				if (p[hcount-left_pos][vcount-up_pos])
+				if (p[hcount-(H_SYNC+H_BACK-1'b1)][vcount-(V_SYNC+V_BACK)])
 					begin
 						r <= 4'b1111;
 						g <= 4'b0000;
