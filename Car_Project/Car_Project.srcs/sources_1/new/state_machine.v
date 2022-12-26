@@ -46,16 +46,16 @@ module state_machine(input clk,
     wire mode_click;
     parameter
     rest = 5'b00000,
-    power_off = 5'b0XXXX,   //关机状�?? 该状态下除检测到的电源按钮输入外的所有检测到的输入无�?
+    power_off = 5'b0XXXX,   //关机状�?? 该状态下除检测到的电源按钮输入外的所有检测到的输入无�??
     manual = 5'b110XX,
-    manual_non_starting = 5'b11001,   //�?机默认模�? 手动驾驶模式未启动状态为默认状�?? �?�?&手动&non-starting
-    manual_starting = 5'b11010,   //�?�?&手动&starting
-    manual_moving = 5'b11011,   //�?�?&手动&moving
+    manual_non_starting = 5'b11001,   //�??机默认模�?? 手动驾驶模式未启动状态为默认状�?? �??�??&手动&non-starting
+    manual_starting = 5'b11010,   //�??�??&手动&starting
+    manual_moving = 5'b11011,   //�??�??&手动&moving
     semi = 5'b101XX,
-    semi_waiting = 5'b10100,        //�?�? 半自动waiting
-    semi_turning_left = 5'b10101,        //�?�? 半自动左�?
-    semi_turning_right = 5'b10110,        //�?�? 半自动右�?
-    semi_moving_forward = 5'b10111,        //�?�? 半自动直�?
+    semi_waiting = 5'b10100,        //�??�?? 半自动waiting
+    semi_turning_left = 5'b10101,        //�??�?? 半自动左�??
+    semi_turning_right = 5'b10110,        //�??�?? 半自动右�??
+    semi_moving_forward = 5'b10111,        //�??�?? 半自动直�??
     auto = 5'b111XX,
     auto_init = 5'b11100,
     turn_sec = 32'o504177500,
@@ -169,11 +169,11 @@ module state_machine(input clk,
                         if (mode_click) begin
                             state <= semi_waiting;
                         end
-                        else if (~clutch & (throttle|(last_reverse ! = reverse))) begin
+                        else if (~clutch & (throttle|(last_reverse != reverse))) begin
                             state <= rest;
                             last_reverse = 0;
                         end
-                        else if (clutch&(last_reverse! = reverse)) begin
+                        else if (clutch&(last_reverse!= reverse)) begin
                             last_reverse <= reverse;
                         end
                         else if (clutch & throttle & ~brake) begin
@@ -189,12 +189,12 @@ module state_machine(input clk,
                         if (mode_click) begin
                             state <= semi_waiting;
                         end
-                        else if (~clutch &  (last_reverse ! = reverse)) begin
+                        else if (~clutch &  (last_reverse != reverse)) begin
                             state <= rest;
                             last_reverse = 0;
                             
                         end
-                        else if (clutch&(last_reverse! = reverse)) begin
+                        else if (clutch&(last_reverse!= reverse)) begin
                             last_reverse <= reverse;
                         end
                         else if (brake) begin
@@ -213,7 +213,7 @@ module state_machine(input clk,
                         if (mode_click) begin
                             state <= semi_waiting;
                         end
-                        else if (~clutch &  (last_reverse ! = reverse)) begin
+                        else if (~clutch &  (last_reverse != reverse)) begin
                             state <= rest;
                             last_reverse = 0;
                         end
