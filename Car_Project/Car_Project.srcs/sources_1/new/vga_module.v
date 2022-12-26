@@ -14,20 +14,19 @@ module vga_module(
     );
 	
 	//parameter define  
-	parameter  H_SYNC   =  10'd96;    //行同�?
-	parameter  H_BACK   =  10'd48;    //行显示后�?
-	parameter  H_DISP   =  10'd640;   //行有效数�?
-	parameter  H_FRONT  =  10'd16;    //行显示前�?
-	parameter  H_TOTAL  =  10'd800;   //行扫描周�?
+	parameter  H_SYNC   =  10'd96;    //行同�?
+	parameter  H_BACK   =  10'd48;    //行显示后�?
+	parameter  H_DISP   =  10'd640;   //行有效数�?
+	parameter  H_FRONT  =  10'd16;    //行显示前�?
+	parameter  H_TOTAL  =  10'd800;   //行扫描周�?
 	
-	parameter  V_SYNC   =  10'd2;     //场同�?
-	parameter  V_BACK   =  10'd33;    //场显示后�?
-	parameter  V_DISP   =  10'd480;   //场有效数�?
-	parameter  V_FRONT  =  10'd10;    //场显示前�?
-	parameter  V_TOTAL  =  10'd525;   //场扫描周�?
+	parameter  V_SYNC   =  10'd2;     //场同�?
+	parameter  V_BACK   =  10'd33;    //场显示后�?
+	parameter  V_DISP   =  10'd480;   //场有效数�?
+	parameter  V_FRONT  =  10'd10;    //场显示前�?
+	parameter  V_TOTAL  =  10'd525;   //场扫描周�?
 
-	reg vga_clk = 0;
-	reg cnt_clk = 0;
+	reg vga_clk;
 	reg [9:0] hcount, vcount;
 	wire [7:0] p[97:0];
 	reg [3:0] num0, num1, num2, num3, num4, num5, num6;
@@ -281,23 +280,18 @@ vga_num_ram_module number_0(
 	.col6(p[97])
 );
 	// 获得像素时钟25MHz
-	always@(posedge clk)
-	begin
-		if(cnt_clk == 1)
-		begin
-			vga_clk <= ~vga_clk;
-			cnt_clk <= 0;
-		end
-		else
-			cnt_clk <= cnt_clk + 1;
-	end   
+	click_even_div click_even_div(
+		.clk(clk),
+		.rst(rst),
+		.clk_div(vga_clk)
+	);
 	
 	//VGA行场同步信号
 	assign hs = (hcount <= H_SYNC - 1'b1) ? 1'b0 : 1'b1;
 	assign vs = (vcount <= V_SYNC - 1'b1) ? 1'b0 : 1'b1;
 
 
-	//行计数器对像素时钟计�?
+	//行计数器对像素时钟计�?
 	always @ (posedge vga_clk or posedge rst)
         begin
             if (rst)
@@ -325,7 +319,7 @@ vga_num_ram_module number_0(
 			end
 	end
 	
-	// 设置显示信号�??
+	// 设置显示信号�??
 	always @ (posedge vga_clk or posedge rst)
 	begin
 		if (rst)
