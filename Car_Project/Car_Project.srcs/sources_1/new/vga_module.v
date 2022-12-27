@@ -2,6 +2,7 @@
 
 module vga_module(
     input clk,
+	input rst,
 	input [4:0] state,
 	input [23:0] record,
     output[11:0] rgb,
@@ -374,24 +375,13 @@ module vga_module(
 	);
 
 	always@(posedge vga_clk) begin
-        if (rst) begin
-            num0  <= 0;
-            num1  <= 0;
-            num2  <= 0;
-            num3  <= 0;
-            num4  <= 0;
-            num5  <= 0;
-            num6  <= 0;
-        end
-        else begin
-            num6 <= record/1_000_000%10;
-            num5 <= record/1_000_00%10;
-            num4 <= record/1_000_0%10;
-            num3 <= record/1_000%10;
-            num2 <= record/1_00%10;
-            num1 <= record/1_0%10;
-            num0 <= record%10;
-        end
+		num6 <= record/1_000_000%10;
+		num5 <= record/1_000_00%10;
+		num4 <= record/1_000_0%10;
+		num3 <= record/1_000%10;
+		num2 <= record/1_00%10;
+		num1 <= record/1_0%10;
+		num0 <= record%10;
 	end
 
 	vga_num_ram_module number_6(

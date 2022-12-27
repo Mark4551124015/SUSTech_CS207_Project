@@ -35,7 +35,6 @@ module record_module(
     
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
     reg [3:0] current_num0, current_num1;
-    reg [23:0] record;
     reg [3:0] seg_state;
     parameter power_off = 5'b0XXXX;
     parameter manual_non_staring  = 5'b11001;
