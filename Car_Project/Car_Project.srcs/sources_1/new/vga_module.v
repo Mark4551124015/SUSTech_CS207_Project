@@ -335,38 +335,35 @@ vga_num_ram_module number_0(
 	end
 	
 	// 设置显示信号�???
-	always @ (posedge vga_clk or posedge rst)
+	always @ (posedge vga_clk)
 	begin
-		if (rst)
-			begin
-				r <= 4'b0000;
-				g <= 4'b1111;
-				b <= 4'b0000;
-			end
-		else if (vcount >= up_pos && vcount < down_pos && hcount >= left_pos && hcount <= right_pos)
-			begin
-				if(hcount - left_pos<=97 && vcount - up_pos<=7)
-				begin
-				if (p[hcount - left_pos][vcount - up_pos])
-					begin
-						r <= 4'b1111;
-						g <= 4'b0000;
-						b <= 4'b0000;
-					end
-				else 
-					begin
-						r <= 4'b0000;
-						g <= 4'b1111;
-						b <= 4'b0000;
-					end
-				end
-			end
-		else 
-		begin
-			r <= 4'b0000;
-			g <= 4'b1111;
-			b <= 4'b0000;
-		end
+		r <= 4'b0000;
+		g <= 4'b1111;
+		b <= 4'b0000;
+		// if (vcount >= up_pos && vcount < down_pos && hcount >= left_pos && hcount <= right_pos)
+		// 	begin
+		// 		if(hcount - left_pos<=97 && vcount - up_pos<=7)
+		// 		begin
+		// 		if (p[hcount - left_pos][vcount - up_pos])
+		// 			begin
+		// 				r <= 4'b1111;
+		// 				g <= 4'b0000;
+		// 				b <= 4'b0000;
+		// 			end
+		// 		else 
+		// 			begin
+		// 				r <= 4'b0000;
+		// 				g <= 4'b1111;
+		// 				b <= 4'b0000;
+		// 			end
+		// 		end
+		// 	end
+		// else 
+		// begin
+		// 	r <= 4'b0000;
+		// 	g <= 4'b1111;
+		// 	b <= 4'b0000;
+		// end
 	end
 endmodule
  
