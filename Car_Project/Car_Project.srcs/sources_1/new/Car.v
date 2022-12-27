@@ -146,7 +146,7 @@ record_module record_module(
 );
 
 vga_module vga_module(
-    .clk(clk),
+    .clk(sys_clk),
     .state(state),
     .record(record),
     .r(r),

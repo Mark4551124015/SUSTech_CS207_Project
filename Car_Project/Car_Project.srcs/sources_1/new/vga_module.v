@@ -24,6 +24,11 @@ module vga_module(
     vdat_end = 10'd514,
     vline_end = 10'd524;
 
+	parameter up_pos = 267;
+	parameter down_pos = 274;
+	parameter left_pos = 415;
+	parameter right_pos = 512;
+
 	// wire vga_clk;
 	reg vga_clk = 0;
 	reg cnt_clk = 0;
@@ -338,11 +343,11 @@ vga_num_ram_module number_0(
 				g <= 4'b1111;
 				b <= 4'b0000;
 			end
-		else if (vcount > vdat_begin && vcount < vdat_end && hcount >= hdat_begin && hcount < hdat_end)
+		else if (vcount >= up_pos && vcount < down_pos && hcount >= left_pos && hcount <= right_pos)
 			begin
-				if(hcount - hdat_begin<=97 && vcount - vdat_begin - 10'd1<=7)
+				if(hcount - left_pos<=97 && vcount - up_pos<=7)
 				begin
-				if (p[hcount - hdat_begin][vcount - vdat_begin - 10'd1])
+				if (p[hcount - left_pos][vcount - up_pos])
 					begin
 						r <= 4'b1111;
 						g <= 4'b0000;
