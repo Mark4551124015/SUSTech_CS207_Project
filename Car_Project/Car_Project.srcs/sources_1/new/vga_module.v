@@ -340,17 +340,20 @@ vga_num_ram_module number_0(
 			end
 		else if (vcount > vdat_begin && vcount < vdat_end && hcount >= hdat_begin && hcount < hdat_end)
 			begin
-			if (p[hcount - hdat_begin][vcount - vdat_begin - 10'd1])
+				if(hcount - hdat_begin<=97 && vcount - vdat_begin - 10'd1<=7)
 				begin
-					r <= 4'b1111;
-					g <= 4'b0000;
-					b <= 4'b0000;
-				end
-			else 
-				begin
-					r <= 4'b0000;
-					g <= 4'b1111;
-					b <= 4'b0000;
+				if (p[hcount - hdat_begin][vcount - vdat_begin - 10'd1])
+					begin
+						r <= 4'b1111;
+						g <= 4'b0000;
+						b <= 4'b0000;
+					end
+				else 
+					begin
+						r <= 4'b0000;
+						g <= 4'b1111;
+						b <= 4'b0000;
+					end
 				end
 			end
 		else 
