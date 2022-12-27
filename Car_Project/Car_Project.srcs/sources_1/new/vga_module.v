@@ -32,7 +32,7 @@ module vga_module(
 	// wire vga_clk;
 	reg vga_clk = 0;
 	reg cnt_clk = 0;
-	reg [9:0] hcount, vcount;
+	reg [11:0] hcount, vcount;
 	wire [7:0] p[97:0];
 	reg [3:0] num0, num1, num2, num3, num4, num5, num6;
 	reg [5:0] let0,let1,let2,let3,let4;
