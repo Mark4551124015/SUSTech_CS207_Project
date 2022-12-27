@@ -12,7 +12,7 @@ module vga_num_ram_module(
 	output reg [7:0] col5,
 	output reg [7:0] col6
     );
-    always @(posedge clk or negedge rst)
+    always @(posedge clk)
 		begin
 			case (data)
 				4'b0000: // "0"
