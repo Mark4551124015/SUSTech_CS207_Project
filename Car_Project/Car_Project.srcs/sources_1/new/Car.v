@@ -53,11 +53,12 @@ module car(
     output [3:0] detector_show,
 
     // VGA
-    output [3:0] r,
-    output [3:0] g,
-    output [3:0] b,
-    output hs,
-    output vs
+    // output [3:0] r,
+    // output [3:0] g,
+    // output [3:0] b,
+    output[11:0] rgb,
+    output hsync,
+    output vsync
 );
 wire clk;
 wire[3:0] switch_total = {clutch,throttle,brake,reverse};
@@ -149,11 +150,9 @@ vga_module vga_module(
     .clk(sys_clk),
     .state(state),
     .record(record),
-    .r(r),
-    .g(g),
-    .b(b),
-    .hs(hs),
-    .vs(vs)
+    .rgb(rgb),
+    .hsync(hsync),
+    .vsync(vsync)
 );
 
 SimulatedDevice simulated_device(
