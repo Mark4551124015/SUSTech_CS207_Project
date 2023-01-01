@@ -31,8 +31,6 @@ module record_module(
     output [7:0] seg_out0,   // output of first 4 lights
     output [7:0] seg_out1
     );
-    
-    
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
     reg [3:0] current_num0, current_num1;
     reg [3:0] seg_state;
@@ -58,7 +56,6 @@ module record_module(
         .clk_out(clk_100hz)
     );
     
-    
     always@(negedge clk_2hz or posedge reset or negedge state[4]) begin
         if (reset | ~state[4]) begin
              record <= 0;
@@ -80,7 +77,6 @@ module record_module(
                 seg_state <= 4'b1000;
         end
     end
-    
 
     always@(posedge clk) begin
         if (reset) begin

@@ -4,8 +4,8 @@ module clk_even_div(
     input rst,
     output reg clk_div
 );    
-    parameter NUM_DIV = 4;
-    reg [3:0]cnt;
+parameter NUM_DIV = 4;
+reg [3:0]cnt;
     
 always @(posedge clk or negedge rst)
     if(!rst) begin

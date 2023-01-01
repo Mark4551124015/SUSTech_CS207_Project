@@ -36,9 +36,7 @@ module auto_module(
     assign auto_move = {moveForward, moveBack, turnLeft, turnRight};    //debug输出auto姿态
     reg [51:0] time_limit;  
     reg [31:0] placeB_cnt;  
-
     reg [31:0] turn_cnt;    //转弯时间
-
 
     //检测有无墙
     wire front_d = detector[3];

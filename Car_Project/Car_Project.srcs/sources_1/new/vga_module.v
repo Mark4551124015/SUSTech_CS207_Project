@@ -2,7 +2,6 @@
 
 module vga_module(
     input clk,
-	input rst,
 	input [4:0] state,
 	input [23:0] record,
     output[11:0] rgb,
@@ -147,7 +146,6 @@ module vga_module(
 
 	vga_let_ram_module letter_0(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let0),
 		.col0(p[0]),
 		.col1(p[1]),
@@ -159,7 +157,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_1(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let1),
 		.col0(p[7]),
 		.col1(p[8]),
@@ -171,7 +168,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_2(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let2),
 		.col0(p[14]),
 		.col1(p[15]),
@@ -183,7 +179,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_3(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let3),
 		.col0(p[21]),
 		.col1(p[22]),
@@ -195,7 +190,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_4(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let4),
 		.col0(p[28]),
 		.col1(p[29]),
@@ -207,7 +201,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_5(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(let5),
 		.col0(p[35]),
 		.col1(p[36]),
@@ -219,7 +212,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_10(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(S),
 		.col0(p1[0]),
 		.col1(p1[1]),
@@ -231,7 +223,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_11(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(T),
 		.col0(p1[7]),
 		.col1(p1[8]),
@@ -243,7 +234,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_12(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(A),
 		.col0(p1[14]),
 		.col1(p1[15]),
@@ -255,7 +245,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_13(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(T),
 		.col0(p1[21]),
 		.col1(p1[22]),
@@ -267,7 +256,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_14(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(E),
 		.col0(p1[28]),
 		.col1(p1[29]),
@@ -279,7 +267,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_15(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(6'b11_1110),
 		.col0(p1[35]),
 		.col1(p1[36]),
@@ -291,7 +278,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_20(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(M),
 		.col0(p2[0]),
 		.col1(p2[1]),
@@ -303,7 +289,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_21(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(I),
 		.col0(p2[7]),
 		.col1(p2[8]),
@@ -315,7 +300,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_22(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(L),
 		.col0(p2[14]),
 		.col1(p2[15]),
@@ -327,7 +311,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_23(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(E),
 		.col0(p2[21]),
 		.col1(p2[22]),
@@ -339,7 +322,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_24(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(A),
 		.col0(p2[28]),
 		.col1(p2[29]),
@@ -351,7 +333,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_25(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(G),
 		.col0(p2[35]),
 		.col1(p2[36]),
@@ -363,7 +344,6 @@ module vga_module(
 	);
 	vga_let_ram_module letter_26(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(E),
 		.col0(p2[42]),
 		.col1(p2[43]),
@@ -386,7 +366,6 @@ module vga_module(
 
 	vga_num_ram_module number_6(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num6),
 		.col0(mile[0]),
 		.col1(mile[1]),
@@ -398,7 +377,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_5(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num5),
 		.col0(mile[7]),
 		.col1(mile[8]),
@@ -410,7 +388,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_4(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num4),
 		.col0(mile[14]),
 		.col1(mile[15]),
@@ -422,7 +399,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_3(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num3),
 		.col0(mile[21]),
 		.col1(mile[22]),
@@ -434,7 +410,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_2(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num2),
 		.col0(mile[28]),
 		.col1(mile[29]),
@@ -446,7 +421,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_1(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num1),
 		.col0(mile[35]),
 		.col1(mile[36]),
@@ -458,7 +432,6 @@ module vga_module(
 	);
 	vga_num_ram_module number_0(
 		.clk(vga_clk),
-		.rst(rst),
 		.data(num0),
 		.col0(mile[42]),
 		.col1(mile[43]),

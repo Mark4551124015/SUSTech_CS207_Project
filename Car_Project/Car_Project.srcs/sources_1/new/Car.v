@@ -27,7 +27,6 @@ module car(
     // Button
     input power_button,          
     input power_off,                
-
     input front_button,           
     input left_button,           
     input right_button,          
@@ -46,16 +45,11 @@ module car(
     output reverse_show,         
     output reverse_mode,          
     output [1:0] turning_show,     
-
     output [7:0] seg_en,
     output [7:0] seg_out0,
     output [7:0] seg_out1,
     output [3:0] detector_show,
-
     // VGA
-    // output [3:0] r,
-    // output [3:0] g,
-    // output [3:0] b,
     output[11:0] rgb,
     output hsync,
     output vsync
@@ -87,6 +81,7 @@ assign reverse_mode = reverse_show;
 assign clk = sys_clk;
 assign detector_show  = auto_state;
 
+// State Machine
 state_machine state_machine(
     .clk(clk),
     .mode(mode),
@@ -145,7 +140,7 @@ record_module record_module(
     .move_forward_signal(move_forward_signal),
     .move_backward_signal(move_backward_signal)
 );
-
+// VGA Showing Module
 vga_module vga_module(
     .clk(sys_clk),
     .state(state),

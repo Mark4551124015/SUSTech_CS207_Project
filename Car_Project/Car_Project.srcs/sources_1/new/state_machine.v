@@ -32,13 +32,10 @@ module state_machine(
     );
     wire clutch,throttle,brake,reverse;
     wire power_off_click;
-    
     wire front_click, left_click, right_click;
-    
     wire power;
     reg [28:0] init = 0;
     wire clk_100hz;
-
     reg last_reverse;
     reg [31:0] semi_cnt;
     wire front_d = detector[3];
@@ -133,7 +130,6 @@ module state_machine(
         .button(button_total[0]),
         .button_click(right_click)
     );
-    
     click_detector on_mode_click(
         .clk(clk),
         .button(mode),
@@ -141,8 +137,6 @@ module state_machine(
     );
 
     assign power = button_total[4];
-    
-    
     always @(posedge clk) begin
         if (power_off_click) begin
             state <= rest;

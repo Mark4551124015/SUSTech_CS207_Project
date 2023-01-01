@@ -4,8 +4,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports power_button]
 set_property PACKAGE_PIN R17 [get_ports power_off]
 set_property IOSTANDARD LVCMOS33 [get_ports power_off]
 
-
-
 set_property PACKAGE_PIN U4 [get_ports front_button]
 set_property IOSTANDARD LVCMOS33 [get_ports front_button]
 

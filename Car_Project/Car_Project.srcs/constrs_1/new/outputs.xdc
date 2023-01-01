@@ -30,7 +30,6 @@ set_property PACKAGE_PIN H5 [get_ports {turning_show[1]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[1]}]
 set_property PACKAGE_PIN H6 [get_ports {turning_show[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {turning_show[0]}]
-
 #debug
 set_property PACKAGE_PIN K2 [get_ports {detector_show[0]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {detector_show[0]}]

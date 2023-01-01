@@ -2,7 +2,6 @@
 
 module vga_let_ram_module(
 	input clk,
-	input rst,
 	input [5:0] data,
 	output reg [7:0] col0,
 	output reg [7:0] col1,
