@@ -28,7 +28,7 @@ module auto_module(
     output reg destroyBarrier,
     output [3:0] auto_move,
     output [4:0] auto_state_out
-    );
+);
     reg moveForward;
     reg moveBack;
     reg turnRight;
@@ -46,7 +46,7 @@ module auto_module(
 
     wire clk_50hz;
     reg last_enable;
-    
+
     reg isCross,needLeft,needRight,needBack;
     clk_module #(.frequency(50)) clk_divider(
         .clk(clk),

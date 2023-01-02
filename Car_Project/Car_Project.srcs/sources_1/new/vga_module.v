@@ -1,14 +1,13 @@
 `timescale 1ns / 1ps
 
 module vga_module(
-    input clk,
-	input [4:0] state,
-	input [23:0] record,
-    output[11:0] rgb,
-    output hsync,
-    output vsync
-    );
-	
+    input clk, // 100MHz system clock
+	input [4:0] state, // Car state
+	input [23:0] record, // Record data
+    output[11:0] rgb, // Red, green and blue color signals
+    output hsync, // Line synchronization signal
+    output vsync // Field synchronization signal
+);
 	//parameter define  
 	parameter
     HDAT_BEGIN = 10'd144,

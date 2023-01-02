@@ -24,28 +24,27 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module clk_module(input clk, reset, enable, output reg clk_out);
-    parameter frequency = 2;        //herZ
+module clk_module(
+    input clk, // 100MHz system clock
+    input enable, // The signal of whether to enable clock divider
+    output reg clk_out // Output clock
+);
+    parameter frequency = 2;
     parameter period = 100_000_000 / frequency;
     reg [31:0] cnt;
-    always@(posedge clk, posedge reset) begin
-        if (reset) begin
-            clk_out                 <= 0;
-            cnt                      <= 0;
+    always@(posedge clk) 
+    begin
+        if (enable) begin
+            if (cnt == (period >> 1 ) - 1) begin
+                clk_out     <= ~clk_out;
+                cnt         <= 0;
+            end
+            else begin 
+                cnt         <= cnt + 1;
+            end    
         end
         else begin
-            if (enable) begin
-                if (cnt == (period >> 1 ) - 1) begin
-                    clk_out     <= ~clk_out;
-                    cnt         <= 0;
-                end
-                else begin 
-                    cnt         <= cnt + 1;
-                end    
-            end
-            else begin
-                clk_out <= 1;
-            end
+            clk_out <= 1;
         end
     end
 endmodule

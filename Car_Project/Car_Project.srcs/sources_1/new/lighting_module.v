@@ -25,18 +25,18 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module lighting_module(
-    input clk,
-    input [4:0] state,
-    input [3:0] switch_total,
-    input [4:0] button_total,
-    output power_state,           //µÁ‘¥◊¥Ã¨œ‘ æµ∆      LEDµ∆D1_0
-    output [1:0] driving_mode,     //º› ªƒ£ Ωœ‘ æµ∆      LEDµ∆D1_1°¢D1_2
-    output [1:0] car_state,        //∆˚≥µ◊¥Ã¨œ‘ æµ∆      LEDµ∆D1_3°¢D1_4
-    output clutch_show,           //¿Î∫œœ‘ æµ∆         LEDµ∆D2_7
-    output throttle_show,         //”Õ√≈œ‘ æµ∆         LEDµ∆D2_6
-    output break_show,            //…≤≥µœ‘ æµ∆         LEDµ∆D2_5
-    output reverse_show,          //µπµ≤œ‘ æµ∆         LEDµ∆D2_4
-    output [1:0]  turning_show      //◊™œÚœ‘ æµ∆         LEDµ∆D1_5°¢LEDµ∆D1_6
+    input clk, // 100MHz system clock
+    input [4:0] state, // Car state
+    input [3:0] switch_total, // Total switch inputs 
+    input [4:0] button_total, // Total button inputs 
+    output power_state, // Power state light
+    output [1:0] driving_mode, // Driving mode lights
+    output [1:0] car_state, // Car state lights
+    output clutch_show, // Clutch show light
+    output throttle_show, // Throttle show light
+    output break_show, // Break show light
+    output reverse_show, // Reverse show light
+    output [1:0] turning_show, // Turning show lights
 );
     parameter power_off = 5'b0XXXX;
     parameter manual_non_staring  = 5'b11001;
@@ -74,7 +74,6 @@ module lighting_module(
     wire leftButton = button_total[1];
     wire rightButton = button_total[0];
     
-
     always@(posedge clk) begin
         casex (state)
             manual_non_staring: 

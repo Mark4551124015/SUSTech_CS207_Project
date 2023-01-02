@@ -20,14 +20,12 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module number_to_seg_module(input [3:0] number,
-             input reset,
-             output reg [7:0] seg_out);
-always@(number, reset) begin
-    if (reset) begin
-        seg_out <= 8'b0000_0000;
-    end
-    else begin
+module number_to_seg_module(
+    input [3:0] number, // 4 bits number data
+    output reg [7:0] seg_out // Outputs of 4 lights
+);
+    always@(number) 
+    begin
         case (number)
             4'h0: seg_out    <= 8'b1111_1100; //0
             4'h1: seg_out    <= 8'b0110_0000; //1
@@ -48,5 +46,4 @@ always@(number, reset) begin
             default: seg_out <= 8'b0000_0001;
         endcase
     end
-end
 endmodule

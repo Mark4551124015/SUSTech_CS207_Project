@@ -21,15 +21,15 @@
 
 
 module state_machine(
-    input clk,
-    input mode,
-    input [3:0] switch_total,
-    input [4:0] button_total,
-    input [3:0] detector,
-    output reg [4:0] state,
-    output reg [31:0] cool,
-    output reg auto_enable
-    );
+    input clk, // 100MHz system cloc
+    input mode, // Driving mode selection signal
+    input [3:0] switch_total, // Total switch inputs
+    input [4:0] button_total, // Total button inputs
+    input [3:0] detector, // Detector signals
+    output reg [4:0] state, // Car state
+    output reg [31:0] cool, // Driving signal in semi-automatic mode
+    output reg auto_enable // The signal of whether to enable automatic mode
+);
     wire clutch,throttle,brake,reverse;
     wire power_off_click;
     wire front_click, left_click, right_click;
@@ -109,7 +109,6 @@ module state_machine(
             end
         endcase
     end
-
     click_detector on_power_off_click(
         .clk(clk),
         .button(button_total[3]),
@@ -135,7 +134,6 @@ module state_machine(
         .button(mode),
         .button_click(mode_click)
     );
-
     assign power = button_total[4];
     always @(posedge clk) begin
         if (power_off_click) begin

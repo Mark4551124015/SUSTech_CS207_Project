@@ -21,16 +21,15 @@
 
 
 module record_module(
-    input clk,
-    input reset,
-    input [4:0] state,
-    input move_forward_signal,
-    input move_backward_signal,
-    output reg [23:0] record,
-    output reg [7:0] seg_en, // enables of 8 lights
-    output [7:0] seg_out0,   // output of first 4 lights
-    output [7:0] seg_out1
-    );
+    input clk, // 100MHz system clock
+    input [4:0] state, // Car state
+    input move_forward_signal, // Move forward signal
+    input move_backward_signal, // Move backward signal
+    output reg [23:0] record, // Record data
+    output reg [7:0] seg_en, // Rnables of eight seven segment digital tubes
+    output [7:0] seg_out0, // Outputs of first 4 lights
+    output [7:0] seg_out1, // Outputs of last 4 lights
+);
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
     reg [3:0] current_num0, current_num1;
     reg [3:0] seg_state;
@@ -40,8 +39,8 @@ module record_module(
     parameter manual_moving = 5'b11011;
     wire clk_2hz, clk_100hz, car_moving;
     assign car_moving = (move_forward_signal || move_backward_signal);
-    number_to_seg_module number_to_seg0(.number(current_num0), .reset(reset), .seg_out(seg_out0));
-    number_to_seg_module number_to_seg1(.number(current_num1), .reset(reset), .seg_out(seg_out1));
+    number_to_seg_module number_to_seg0(.number(current_num0), .seg_out(seg_out0));
+    number_to_seg_module number_to_seg1(.number(current_num1), .seg_out(seg_out1));
     blink_module seg_refresh(
         .clk(clk),
         .enable(car_moving),
@@ -51,13 +50,12 @@ module record_module(
     
     clk_module #(.period(100_000)) clk_div(
         .clk(clk), 
-        .reset(reset),
         .enable(1),
         .clk_out(clk_100hz)
     );
     
-    always@(negedge clk_2hz or posedge reset or negedge state[4]) begin
-        if (reset | ~state[4]) begin
+    always@(negedge clk_2hz or negedge state[4]) begin
+        if (~state[4]) begin
              record <= 0;
         end
         else begin
@@ -67,36 +65,20 @@ module record_module(
     
     //seg driver
     always@(posedge clk_100hz) begin
-        if (reset) begin
+        if (seg_state != 4'b0001)
+            seg_state <= seg_state >> 1;
+        else
             seg_state <= 4'b1000;
-        end
-        else begin
-            if (seg_state != 4'b0001)
-                seg_state <= seg_state >> 1;
-            else
-                seg_state <= 4'b1000;
-        end
     end
 
     always@(posedge clk) begin
-        if (reset) begin
-            num0  <= 0;
-            num1  <= 0;
-            num2  <= 0;
-            num3  <= 0;
-            num4  <= 0;
-            num5  <= 0;
-            num6  <= 0;
-        end
-        else begin
-            num6 <= record/1_000_000%10;
-            num5 <= record/1_000_00%10;
-            num4 <= record/1_000_0%10;
-            num3 <= record/1_000%10;
-            num2 <= record/1_00%10;
-            num1 <= record/1_0%10;
-            num0 <= record%10;
-        end
+        num6 <= record/1_000_000%10;
+        num5 <= record/1_000_00%10;
+        num4 <= record/1_000_0%10;
+        num3 <= record/1_000%10;
+        num2 <= record/1_00%10;
+        num1 <= record/1_0%10;
+        num0 <= record%10;
         
         if (~state[4]) begin
             seg_en       <= 8'b0000_0000;

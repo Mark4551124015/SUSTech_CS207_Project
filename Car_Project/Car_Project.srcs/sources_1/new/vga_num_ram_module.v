@@ -1,16 +1,16 @@
 `timescale 1ns / 1ps
 
 module vga_num_ram_module(
-	input clk,
-	input [3:0] data,
-	output reg [7:0] col0,
-	output reg [7:0] col1,
-	output reg [7:0] col2,
-	output reg [7:0] col3,
-	output reg [7:0] col4,
-	output reg [7:0] col5,
-	output reg [7:0] col6
-    );
+	input clk, // 100MHz system clock
+	input [3:0] data, // Six bits of data
+	output reg [7:0] col0, // First column data
+	output reg [7:0] col1, // Second column data
+	output reg [7:0] col2, // Third column data
+	output reg [7:0] col3, // Fourth column data
+	output reg [7:0] col4, // Fifth column data
+	output reg [7:0] col5, // Sixth column data
+	output reg [7:0] col6 // Seventh column data
+);
     always @(posedge clk)
 		begin
 			case (data)

@@ -25,16 +25,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module moving_module(
-    input clk,
-    input [4:0] state,
-    input [3:0] switch_total,
-    input [4:0] button_total,
-    input [3:0] auto_move,
-    input [31:0] cool,
-    output reg move_forward_signal,
-    output reg move_backward_signal,
-    output reg turn_left_signal,
-    output reg turn_right_signal
+    input clk, // 100MHz system clock
+    input [4:0] state, // Car state
+    input [3:0] switch_total, // Total switch inputs
+    input [4:0] button_total, // Total button inputs
+    input [3:0] auto_move, // Move signal outputs in automatic mode
+    input [31:0] cool, // Driving signal in semi-automatic mode
+    output reg move_forward_signal, // Move forward signal
+    output reg move_backward_signal, // Move backward signal
+    output reg turn_left_signal, // Turn left signal
+    output reg turn_right_signal // Turn right signal
 );
     parameter
         rest = 5'b00000,
