@@ -36,7 +36,7 @@ module lighting_module(
     output throttle_show, // Throttle show light
     output break_show, // Break show light
     output reverse_show, // Reverse show light
-    output [1:0] turning_show, // Turning show lights
+    output [1:0] turning_show // Turning show lights
 );
     parameter power_off = 5'b0XXXX;
     parameter manual_non_staring  = 5'b11001;

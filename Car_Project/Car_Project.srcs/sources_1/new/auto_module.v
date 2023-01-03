@@ -21,13 +21,13 @@
 
 
 module auto_module(
-    input clk,
-    input enable,
-    input [3:0] detector,
-    output reg placeBarrier,
-    output reg destroyBarrier,
-    output [3:0] auto_move,
-    output [4:0] auto_state_out
+    input clk,  // 100MHz system clock
+    input enable, // The signal of whether to enable automatic driving mode
+    input [3:0] detector, // Detector data
+    output reg placeBarrier, // Place beacon
+    output reg destroyBarrier, // Destroy beacon
+    output [3:0] auto_move, // Move signal outputs in automatic mode
+    output [4:0] auto_state_out // Showing for debuging
 );
     reg moveForward;
     reg moveBack;

@@ -441,7 +441,7 @@ module vga_module(
 		.col6(mile[48])
 	);
 
-	//行计数器对像素时钟计�????
+	//行计数器对像素时钟计数
 	always@(posedge vga_clk)
 	begin
 		if(hcount_ov)

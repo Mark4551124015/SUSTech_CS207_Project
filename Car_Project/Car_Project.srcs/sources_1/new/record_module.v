@@ -28,7 +28,7 @@ module record_module(
     output reg [23:0] record, // Record data
     output reg [7:0] seg_en, // Rnables of eight seven segment digital tubes
     output [7:0] seg_out0, // Outputs of first 4 lights
-    output [7:0] seg_out1, // Outputs of last 4 lights
+    output [7:0] seg_out1 // Outputs of last 4 lights
 );
     reg [3:0] num0, num1, num2, num3, num4, num5, num6; // num6 is MSB
     reg [3:0] current_num0, current_num1;
