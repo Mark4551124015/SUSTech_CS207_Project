@@ -27,8 +27,8 @@ module state_machine(
     input [4:0] button_total, // Total button inputs
     input [3:0] detector, // Detector signals
     output reg [4:0] state, // Car state
-    output reg [31:0] cool, // Driving signal in semi-automatic mode
-    output reg auto_enable // The signal of whether to enable automatic mode
+    output reg [31:0] cool // Driving signal in semi-automatic mode
+    // output reg auto_enable // The signal of whether to enable automatic mode
 );
     wire clutch,throttle,brake,reverse;
     wire power_off_click;

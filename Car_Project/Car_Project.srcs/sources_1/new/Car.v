@@ -139,6 +139,8 @@ module car(
         .move_forward_signal(move_forward_signal),
         .move_backward_signal(move_backward_signal)
     );
+
+    
     // VGA Showing Module
     vga_module vga_module(
         .clk(sys_clk),

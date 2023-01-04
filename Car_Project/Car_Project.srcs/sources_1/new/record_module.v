@@ -59,7 +59,7 @@ module record_module(
              record <= 0;
         end
         else begin
-             record = record + 1;
+             record <= record + 1;
         end
     end
     
@@ -105,6 +105,8 @@ module record_module(
                 4'b0001: begin
                     current_num0 <= num3;
                     seg_en       <= 8'b0001_0000;
+                end
+                default: begin
                 end
             endcase
         end

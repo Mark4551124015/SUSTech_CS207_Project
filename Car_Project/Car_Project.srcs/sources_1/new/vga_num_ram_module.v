@@ -114,6 +114,9 @@ module vga_num_ram_module(
 						col5 <= 8'b0011_1110;
 						col6 <= 8'b0000_0000;
 					end
+				default:
+					begin
+					end
 			endcase
 		end
 endmodule
