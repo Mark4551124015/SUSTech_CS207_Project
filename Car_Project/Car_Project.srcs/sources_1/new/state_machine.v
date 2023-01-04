@@ -34,7 +34,7 @@ module state_machine(
     wire power_off_click;
     wire front_click, left_click, right_click;
     wire power;
-    reg [28:0] init = 0;
+    reg [28:0] init;
     wire clk_100hz;
     reg last_reverse;
     reg [31:0] semi_cnt;
@@ -138,7 +138,7 @@ module state_machine(
     always @(posedge clk) begin
         if (power_off_click) begin
             state <= rest;
-            last_reverse = 0;
+            last_reverse <= 0;
         end
         else begin
             casex(state)
@@ -149,7 +149,7 @@ module state_machine(
                             state <= manual_non_starting;
                             init <=0;
                         end else begin
-                            init = init + 1;
+                            init <= init + 1;
                         end
                     end
                     else begin
@@ -165,7 +165,7 @@ module state_machine(
                     end
                     else if (~clutch & (throttle|(last_reverse != reverse ))) begin
                        state <= rest;
-                       last_reverse = 0;
+                       last_reverse <= 0;
                    end
                    else if (clutch&(last_reverse!=reverse)) begin
                        last_reverse<=reverse;
@@ -185,7 +185,7 @@ module state_machine(
                     end
                     else if (~clutch &  (last_reverse != reverse )) begin
                        state <= rest;
-                       last_reverse = 0;
+                       last_reverse <= 0;
 
                     end
                     else if (clutch&(last_reverse!=reverse)) begin
@@ -209,7 +209,7 @@ module state_machine(
                     end
                     else if (~clutch &  (last_reverse != reverse )) begin
                         state <= rest;
-                        last_reverse = 0;
+                        last_reverse <= 0;
                     end
                     else if (brake) begin 
                         state <= manual_non_starting;
@@ -253,35 +253,35 @@ module state_machine(
                 semi_moving_forward:
                 begin
                     if (cool > 0 ) begin
-                        cool = cool - 1;
+                        cool <= cool - 1;
                         state <= semi_moving_forward;
                         turning_back = 0;
                     end
                     else begin
                         if (semi_cnt < forward_sec) begin
-                                semi_cnt = semi_cnt+1;
+                                semi_cnt <= semi_cnt+1;
                                 state <= semi_moving_forward;
                         end
                         else begin
                             if (isCross) begin
-                                semi_cnt = 0;
-                                cool = cool_sec;
+                                semi_cnt <= 0;
+                                cool <= cool_sec;
                                 state <= semi_waiting;
                             end
                             else if (needLeft) begin
-                                semi_cnt = 0;
-                                cool = cool_sec;
+                                semi_cnt <= 0;
+                                cool <= cool_sec;
                                 state <= semi_turning_left;
                             end
                             else if (needRight) begin
-                                semi_cnt = 0;
-                                cool = cool_sec;
+                                semi_cnt <= 0;
+                                cool <= cool_sec;
                                 turning_back  = 0;
                                 state <= semi_turning_right;
                             end
                             else if (needBack) begin
-                                semi_cnt = 0;
-                                cool = cool_sec;
+                                semi_cnt <= 0;
+                                cool <= cool_sec;
                                 turning_back  = 1;
                                 state <= semi_turning_right;
                             end
@@ -295,32 +295,32 @@ module state_machine(
                 semi_turning_left:
                 begin
                     if (cool > 1 ) begin
-                        cool = cool - 1;
+                        cool <= cool - 1;
                         state <= semi_turning_left;
                     end
                     else if (cool == 1 ) begin
-                        cool = cool - 1;
+                        cool <= cool - 1;
                         if (isCross) begin
-                            semi_cnt = 0;
+                            semi_cnt <= 0;
                             state <= semi_waiting;
                         end
                         else if (needLeft) begin
                             state <= semi_turning_left;
                         end
                         else if (needRight) begin
-                            semi_cnt = 0;
+                            semi_cnt <= 0;
                             turning_back  = 0;
                             state <= semi_turning_right;
                         end
                     end
                     else begin
                         if (semi_cnt < turn_sec) begin
-                            semi_cnt = semi_cnt + 1;
+                            semi_cnt <= semi_cnt + 1;
                             state <= semi_turning_left;
                         end
                         else begin
-                            semi_cnt = 0;
-                            cool = cool_sec;
+                            semi_cnt <= 0;
+                            cool <= cool_sec;
                             state <= semi_moving_forward;
                         end
                     end
@@ -329,17 +329,17 @@ module state_machine(
                 semi_turning_right:
                 begin
                     if (cool > 1 ) begin
-                        cool = cool - 1;
+                        cool <= cool - 1;
                         state <= semi_turning_right;
                     end
                     else if (cool == 1 ) begin
-                        cool = cool - 1;
+                        cool <= cool - 1;
                         if (isCross) begin
-                            semi_cnt = 0;
+                            semi_cnt <= 0;
                             state <= semi_waiting;
                         end
                         else if (needLeft) begin
-                            semi_cnt = 0;
+                            semi_cnt <= 0;
 
                             
                             state <= semi_turning_left;
@@ -354,17 +354,17 @@ module state_machine(
                     end
                     else begin
                         if (semi_cnt < turn_sec) begin
-                            semi_cnt = semi_cnt + 1;
+                            semi_cnt <= semi_cnt + 1;
                             state <= semi_turning_right;
                         end
                         else begin
                             if (turning_back == 1) begin
                                 turning_back = 0;
-                                semi_cnt = 0;
+                                semi_cnt <= 0;
                             end
                             else begin
-                                semi_cnt = 0;
-                                cool = cool_sec;
+                                semi_cnt <= 0;
+                                cool <= cool_sec;
                                 state <= semi_moving_forward;
                             end
                         end
