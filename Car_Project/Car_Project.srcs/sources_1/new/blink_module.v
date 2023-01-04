@@ -20,32 +20,29 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module blink_module(
-    input clk, // 100MHz system clock
-    input enable, // The signal of whether to enable clock divider
-    input blink, // Blink signal 
-    output reg clk_out // Output clock
+module blink_module (
+    input clk,  // 100MHz system clock
+    input enable,  // The signal of whether to enable clock divider
+    input blink,  // Blink signal 
+    output reg clk_out  // Output clock
 );
-    parameter period = 100_000_000;
-    reg [31:0] cnt;
-    always@(posedge clk) begin
-        if (~enable) begin
-            clk_out                 <= 0;
-            cnt                      <= 0;
+  parameter period = 100_000_000;
+  reg [31:0] cnt;
+  always @(posedge clk) begin
+    if (~enable) begin
+      clk_out <= 0;
+      cnt     <= 0;
+    end else begin
+      if (blink) begin
+        if (cnt == (period >> 1) - 1) begin
+          clk_out <= ~clk_out;
+          cnt     <= 0;
+        end else begin
+          cnt <= cnt + 1;
         end
-        else begin
-            if (blink) begin
-                if (cnt == (period >> 1 ) - 1) begin
-                    clk_out     <= ~clk_out;
-                    cnt         <= 0;
-                end
-                else begin 
-                    cnt         <= cnt + 1;
-                end    
-            end
-            else begin
-                clk_out <= 1;
-            end
-        end
+      end else begin
+        clk_out <= 1;
+      end
     end
+  end
 endmodule
