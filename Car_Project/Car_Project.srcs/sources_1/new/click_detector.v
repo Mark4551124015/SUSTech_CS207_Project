@@ -7,7 +7,7 @@
 // Design Name: 
 // Module Name: click_detector
 // Project Name: 
-// Target Devices: 
+// Target Devices:  
 // Tool Versions: 
 // Description: 
 // 

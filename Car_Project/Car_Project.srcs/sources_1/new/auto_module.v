@@ -46,6 +46,7 @@ module auto_module (
   wire right_d = detector[0];
 
   wire clk_50hz;
+  wire [1:0] cross_cnt;
   reg last_enable;
 
   reg isCross, needLeft, needRight, needBack;
@@ -56,6 +57,7 @@ module auto_module (
       .enable(enable),
       .clk_out(clk_50hz)
   );
+
   parameter
     auto_rest = 5'b00001,
     auto_forward = 5'b00000,
@@ -64,19 +66,12 @@ module auto_module (
     auto_turn_back = 5'b00100,
     auto_placeB = 5'b00101,
     auto = 5'b111XX,
-
-    turn_sec = 32'd85_000_000,          //转90度时间
-  turn_back_sec = 32'd180_000_000,  //转180度时间
-  forward_sec = 32'd50_000_000,  //前进走出路口时间
-  cool_sec = 32'd10_000_000,  //完成转向后回正时间
-  rest_sec = 32'd5_000_000,  //detector延迟
-
-  place_Barrier_sec = 32'd250_000_000,
-    place_Barrier_sec_half = 32'd85_000_000,
-
-    buffer_sec = 32'd2_100_000,                 //放路标所需持续时间
-  max_right = 5'd5,  //改成depth
-  destroy_timelimit = 33'd6_000_000_000;
+    turn_sec = 32'd85_000_000, //转90度时间
+    turn_back_sec = 32'd180_000_000,  //转180度时间
+    forward_sec = 32'd80_000_000,  //前进走出路口时间
+    cool_sec = 32'd10_000_000,  //完成转向后回正时间
+    rest_sec = 32'd5_000_000,  //detector延迟
+    buffer_sec = 32'd2_100_000;  //放路标所需持续时间
 
   reg [4:0] auto_state;
   reg [5:0] lastState;
@@ -84,8 +79,84 @@ module auto_module (
   reg [31:0] cool;
   reg [31:0] forward_cnt;
   reg [31:0] buffer;
+  reg count_down;
 
+  reg init_counter;
+  reg [1:0] count;
+  reg get_back;
+  wire couter_set[8:0];
+  wire all_set;
   reg needBarrier;
+
+  assign all_set = ((counter[8] & couter_set[8])| (counter[7] & couter_set[7]) | (counter[6] & couter_set[6]) |(counter[5] & couter_set[5]) |(counter[4] & couter_set[4]) | (counter[3] & couter_set[3]) |(counter[2] & couter_set[2])| (counter[1] & couter_set[1]));
+
+  assign cross_cnt = (front_d + left_d + right_d);
+
+  // auto_counter c0(
+  //   .clk(clk),
+  //   .init(init_counter),
+  //   .init_cnt(count),
+  //   .all_set(couter_set[0]),
+  //   .count_down(get_back&counter[0])
+  // );
+  auto_counter c1 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[1]),
+      .count_down(get_back & counter[1])
+  );
+  auto_counter c2 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[2]),
+      .count_down(get_back & counter[2])
+  );
+  auto_counter c3 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[3]),
+      .count_down(get_back & counter[3])
+  );
+  auto_counter c4 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[4]),
+      .count_down(get_back & counter[4])
+  );
+  auto_counter c5 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[5]),
+      .count_down(get_back & counter[5])
+  );
+  auto_counter c6 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[6]),
+      .count_down(get_back & counter[6])
+  );
+  auto_counter c7 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[7]),
+      .count_down(get_back & counter[7])
+  );
+  auto_counter c8 (
+      .clk(clk),
+      .init(init_counter),
+      .init_cnt(count),
+      .all_set(couter_set[8]),
+      .count_down(get_back & counter[8])
+  );
+
+
   assign auto_state_out = {isCross, isCross, needLeft, needRight, needBack};  //debug
 
   always @(posedge clk_50hz) begin
@@ -143,179 +214,183 @@ module auto_module (
 
   always @(posedge clk) begin
     if (enable & ~last_enable) begin
-      auto_state <= auto_forward;
+      auto_state = auto_forward;
     end else begin
       last_enable = 1;
     end
     if (enable) begin
       case (auto_state)
         auto_forward: begin
-          moveForward <= 1;
-          moveBack <= 0;
-          turnLeft <= 0;
-          turnRight <= 0;
+          moveForward = 1;
+          moveBack = 0;
+          turnLeft = 0;
+          turnRight = 0;
           if (forward_cnt > 1) begin
-            forward_cnt <= forward_cnt - 1;
-            moveForward <= 1;
-            moveBack <= 0;
-            turnLeft <= 0;
-            turnRight <= 0;
-            rest <= rest_sec;
+            forward_cnt = forward_cnt - 1;
+            moveForward = 1;
+            moveBack = 0;
+            turnLeft = 0;
+            turnRight = 0;
+            rest = rest_sec;
           end else if (forward_cnt == 1) begin
-            forward_cnt <= forward_cnt - 1;
-            moveForward <= 1;
-            moveBack <= 0;
-            turnLeft <= 0;
-            turnRight <= 0;
-            rest <= rest_sec;
+            forward_cnt = forward_cnt - 1;
+            moveForward = 1;
+            moveBack = 0;
+            turnLeft = 0;
+            turnRight = 0;
+            rest = rest_sec;
+            get_back = 0;
             if (needBarrier) begin
-              buffer <= buffer_sec;
-              placeBarrier <= 1;
-            end
-          end else if (isCross | needLeft | needRight | needBack) begin
-            cool <= cool_sec;
-            if (rest > 0) begin
-              rest <= rest - 1;
-              moveForward <= 0;
-              moveBack <= 0;
-              turnLeft <= 0;
-              turnRight <= 0;
-            end else begin
-              if (~isCross) begin  // 非路口直接转向 Turn directly if not Cross
-                if (needLeft) begin
-                  turn_cnt <= turn_sec;
-                  auto_state <= auto_turn_left;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                end else if (needRight) begin
-                  turn_cnt <= turn_sec;
-                  auto_state <= auto_turn_right;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                end else if (needBack) begin
-                  turn_cnt <= turn_back_sec;
-                  auto_state <= auto_turn_right;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                end
-              end else begin  // 路口给走的方向放信标 Turn after place the barrier
-                if (needLeft) begin
-                  turn_cnt <= turn_sec;
-                  auto_state <= auto_turn_left;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                  needBarrier <= 1;
-                end else if (needRight) begin
-                  turn_cnt <= turn_sec;
-                  auto_state <= auto_turn_right;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                  needBarrier <= 1;
-                end else begin
-                  auto_state <= auto_forward;
-                  moveForward <= 0;
-                  moveBack <= 0;
-                  turnLeft <= 0;
-                  turnRight <= 0;
-                  forward_cnt <= forward_sec;
-                  needBarrier <= 1;
-                end
-              end
+              buffer = buffer_sec;
+              placeBarrier = 1;
+              needBarrier = 0;
             end
           end else begin
-            moveForward <= 1;
-            moveBack <= 0;
-            turnLeft <= 0;
-            turnRight <= 0;
-            turn_cnt <= turn_cnt;
-            rest <= rest_sec;
+            if (isCross | needLeft | needRight | needBack) begin
+              cool = cool_sec;
+              if (rest > 0) begin
+                rest = rest - 1;
+                moveForward = 0;
+                moveBack = 0;
+                turnLeft = 0;
+                turnRight = 0;
+              end else begin
+                if (isCross) begin  // 非路口直接转向 Turn directly if not Cross
+                  needBarrier = 1;
+                  if (needLeft) begin
+                    turn_cnt = turn_sec;
+                    auto_state = auto_turn_left;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                  end else if (needRight) begin
+                    turn_cnt = turn_sec;
+                    auto_state = auto_turn_right;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                  end else begin
+                    auto_state = auto_forward;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                    forward_cnt = forward_sec;
+                  end
+                  if (~get_back) begin
+                    counter = counter << 1;
+                    init_counter = 1;
+                    count = cross_cnt;
+                  end else begin
+                    if (all_set) begin
+                      // destroyBarrier = 1;
+                      buffer  = buffer_sec;
+                      counter = counter >> 1;
+                    end
+                  end
+                end else begin  // 路口给走的方向放信标 Turn after place the barrier
+
+
+                  if (needLeft) begin
+                    turn_cnt = turn_sec;
+                    auto_state = auto_turn_left;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                  end else if (needRight) begin
+                    turn_cnt = turn_sec;
+                    auto_state = auto_turn_right;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                  end else if (needBack) begin
+                    turn_cnt = turn_back_sec;
+                    auto_state = auto_turn_right;
+                    moveForward = 0;
+                    moveBack = 0;
+                    turnLeft = 0;
+                    turnRight = 0;
+                    get_back = 1;
+                    destroyBarrier = 1;
+                    buffer = buffer_sec;
+                  end
+                end
+              end
+            end else begin
+              moveForward = 1;
+              moveBack = 0;
+              turnLeft = 0;
+              turnRight = 0;
+              turn_cnt = turn_cnt;
+              rest = rest_sec;
+            end
           end
         end
         auto_turn_left: begin
           if (turn_cnt > 0) begin
-            moveForward <= 0;
-            moveBack <= 0;
-            turnLeft <= 1;
-            turnRight <= 0;
-            turn_cnt <= turn_cnt - 1;
-            auto_state <= auto_turn_left;
+            moveForward = 0;
+            moveBack = 0;
+            turnLeft = 1;
+            turnRight = 0;
+            turn_cnt = turn_cnt - 1;
+            auto_state = auto_turn_left;
           end else begin
             if (cool > 0) begin
-              cool <= cool - 1;
-              moveForward <= 0;
-              moveBack <= 0;
-              turnLeft <= 0;
-              turnRight <= 0;
-              auto_state <= auto_turn_left;
+              cool = cool - 1;
+              moveForward = 0;
+              moveBack = 0;
+              turnLeft = 0;
+              turnRight = 0;
+              auto_state = auto_turn_left;
             end else begin
-              forward_cnt <= forward_sec;
-              auto_state  <= auto_forward;
+              forward_cnt = forward_sec;
+              auto_state  = auto_forward;
             end
           end
         end
         auto_turn_right: begin
           if (turn_cnt > 0) begin
-            moveForward <= 0;
-            moveBack <= 0;
-            turnLeft <= 0;
-            turnRight <= 1;
-            turn_cnt <= turn_cnt - 1;
-            auto_state <= auto_turn_right;
+            moveForward = 0;
+            moveBack = 0;
+            turnLeft = 0;
+            turnRight = 1;
+            turn_cnt = turn_cnt - 1;
+            auto_state = auto_turn_right;
           end else begin
             if (cool > 0) begin
-              cool <= cool - 1;
-              moveForward <= 0;
-              moveBack <= 0;
-              turnLeft <= 0;
-              turnRight <= 0;
-              auto_state <= auto_turn_right;
+              cool = cool - 1;
+              moveForward = 0;
+              moveBack = 0;
+              turnLeft = 0;
+              turnRight = 0;
+              auto_state = auto_turn_right;
             end else begin
-              forward_cnt <= forward_sec;
-              auto_state  <= auto_forward;
+              forward_cnt = forward_sec;
+              auto_state  = auto_forward;
             end
           end
         end
         default: begin
-          auto_state <= auto_state;
-          placeB_cnt <= placeB_cnt;
-          turn_cnt <= turn_cnt;
-          moveForward <= moveForward;
-          moveBack <= moveBack;
-          turnLeft <= turnLeft;
-          turnRight <= turnRight;
+          auto_state = auto_state;
+          placeB_cnt = placeB_cnt;
+          turn_cnt = turn_cnt;
+          moveForward = moveForward;
+          moveBack = moveBack;
+          turnLeft = turnLeft;
+          turnRight = turnRight;
         end
       endcase
-
-
-      // if (isCross) begin
-      //     destroyCnt = destroy_timelimit;
-      // end
-      // else if (destroyCnt > 0) begin
-      //     destroyCnt = destroyCnt -1;
-      // end
-      // else begin
-      //     destroyBarrier = 1;
-      //     buffer = buffer_sec;
-      //     destroyCnt = destroy_timelimit;
-      // end
-
       if (buffer > 0) begin
-        placeBarrier <= placeBarrier;
-        destroyBarrier <= destroyBarrier;
-        buffer <= buffer - 1;
+        // placeBarrier   = placeBarrier;
+        // destroyBarrier = destroyBarrier;
+        buffer = buffer - 1;
       end else begin
-        placeBarrier   <= 0;
-        destroyBarrier <= 0;
+        placeBarrier   = 0;
+        destroyBarrier = 0;
       end
     end
   end

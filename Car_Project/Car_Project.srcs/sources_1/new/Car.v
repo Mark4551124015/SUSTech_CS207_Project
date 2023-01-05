@@ -151,7 +151,7 @@ module car (
       .vsync(vsync)
   );
 
-  SimulatedDevice simulated_device (
+  SimulatedDevice simulated_device(
       .sys_clk(sys_clk),
       .rx(rx),
       .tx(tx),
