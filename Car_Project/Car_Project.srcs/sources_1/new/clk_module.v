@@ -35,13 +35,13 @@ module clk_module (
   always @(posedge clk) begin
     if (enable) begin
       if (cnt == (period >> 1) - 1) begin
-        clk_out <= ~clk_out;
-        cnt     <= 0;
+        clk_out = ~clk_out;
+        cnt     = 0;
       end else begin
-        cnt <= cnt + 1;
+        cnt = cnt + 1;
       end
     end else begin
-      clk_out <= 1;
+      clk_out = 1;
     end
   end
 endmodule

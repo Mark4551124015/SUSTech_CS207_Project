@@ -27,23 +27,24 @@ module auto_counter (
     input count_down,
     output reg all_set
 );
+
   reg lastCD;
   reg inited;
   reg [1:0] counter;
   always @(posedge clk) begin
     if (~inited & init) begin
-      counter <= init_cnt;
-      inited  <= 1;
-      all_set <= 0;
+      counter=init_cnt;
+      inited =1;
+      all_set=0;
     end
     if (count_down & ~lastCD) begin
       if (counter > 0) begin
-        counter <= counter - 1;
+        counter=counter - 1;
       end else begin
-        all_set <= 1;
-        inited  <= 0;
+        all_set=1;
+        inited =0;
       end
     end
-    lastCD <= count_down;
+    lastCD=count_down;
   end
 endmodule

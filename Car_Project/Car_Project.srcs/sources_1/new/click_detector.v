@@ -25,22 +25,29 @@ module click_detector (
     output reg button_click  // Output button signal
 );
   reg tmp = 0;
-  reg [31:0] protect = 0;
+  reg [31:0] protect_press = 0;
+  reg [31:0] protect_release = 0;
   parameter cool_sec = 32'd2_000_000;
   always @(posedge clk) begin
-    if (protect == 0) begin
       if (~tmp & button) begin
-        tmp <= 1;
+        if (protect_press < cool_sec) begin
+          protect_press = protect_press + 1; 
+        end
+        else begin
+          tmp = 1;
+          protect_release = 0;
+        end
       end else if (tmp & ~button) begin
-        button_click <= 1;
-        tmp <= 0;
-        protect = cool_sec;
+        if (protect_release < cool_sec) begin
+          protect_release = protect_release + 1; 
+        end
+        else begin
+          tmp = 0;
+          protect_press = 0;
+          button_click = 1;
+        end
       end else begin
-        button_click <= 0;
+        button_click = 0;
       end
-    end else begin
-      protect = protect - 1;
-      button_click <= 0;
-    end
   end
 endmodule

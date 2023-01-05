@@ -26,10 +26,12 @@ module car (
     input rst,  // Not reset button, but driving mode selection button
     // Button
     input power_button,  // Power on button
-    input power_off,  // Power off button
+    // input power_off,  // Power off button
     input front_button,  // Move front button
     input left_button,  // Turn left button
     input right_button,  // Turn right button
+    input back_button,  // Turn right button
+    input mode,
     // Switch
     input clutch,  // Clutch switch
     input throttle,  // Throttle switch
@@ -56,7 +58,6 @@ module car (
 );
   wire clk;
   wire [3:0] switch_total = {clutch, throttle, brake, reverse};
-  wire [4:0] button_total = {power_button, power_off, front_button, left_button, right_button};
   wire [4:0] state;
 
   wire move_forward_signal;
@@ -71,8 +72,11 @@ module car (
   wire back_detector;
   wire left_detector;
   wire right_detector;
-  wire mode = ~rst;
-  wire [31:0] cool;
+  wire power_off = ~rst;        // Power off button
+  wire stay;
+
+  wire [5:0] button_total = {back_button, power_button, power_off, front_button, left_button, right_button};
+
   wire [23:0] record;
   wire auto_enable = state[3] & state[2];
   wire [3:0] detector = {front_detector, back_detector, left_detector, right_detector};
@@ -84,7 +88,7 @@ module car (
   state_machine state_machine (
       .clk(clk),
       .mode(mode),
-      .cool(cool),
+      .stay(stay),
       .detector(detector),
       .switch_total(switch_total),
       .button_total(button_total),
@@ -105,7 +109,7 @@ module car (
       .clk(clk),
       .state(state),
       .auto_move(auto_move),
-      .cool(cool),
+      .stay(stay),
       .switch_total(switch_total),
       .button_total(button_total),
       .move_forward_signal(move_forward_signal),
@@ -151,7 +155,7 @@ module car (
       .vsync(vsync)
   );
 
-  SimulatedDevice simulated_device(
+  SimulatedDevice uart_device(
       .sys_clk(sys_clk),
       .rx(rx),
       .tx(tx),

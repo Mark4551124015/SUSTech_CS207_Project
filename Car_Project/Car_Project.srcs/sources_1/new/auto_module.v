@@ -35,7 +35,6 @@ module auto_module (
   reg turnLeft;
   assign auto_move = {moveForward, moveBack, turnLeft, turnRight};  //debug输出auto姿态
   reg [51:0] time_limit;
-  reg [31:0] placeB_cnt;
   reg [31:0] turn_cnt;  //转弯时间
   reg [8:0] counter = 1;
 
@@ -67,11 +66,11 @@ module auto_module (
     auto_placeB = 5'b00101,
     auto = 5'b111XX,
     turn_sec = 32'd85_000_000, //转90度时间
-    turn_back_sec = 32'd180_000_000,  //转180度时间
-    forward_sec = 32'd80_000_000,  //前进走出路口时间
-    cool_sec = 32'd10_000_000,  //完成转向后回正时间
-    rest_sec = 32'd5_000_000,  //detector延迟
-    buffer_sec = 32'd2_100_000;  //放路标所需持续时间
+  turn_back_sec = 32'd180_000_000,  //转180度时间
+  forward_sec = 32'd90_000_000,  //前进走出路口时间
+  cool_sec = 32'd20_000_000,  //完成转向后回正时间
+  rest_sec = 32'd6_000_000,  //detector延迟
+  buffer_sec = 32'd2_100_000;  //放路标所需持续时间
 
   reg [4:0] auto_state;
   reg [5:0] lastState;
@@ -163,21 +162,21 @@ module auto_module (
     casex (detector)
       4'bXX00:            //left & right
         begin
-        isCross   = ~detector[2];
+        isCross   = 1;
         needLeft  = 0;
         needRight = 1;
         needBack  = 0;
       end
       4'b0X01:            //left & front
         begin
-        isCross   = ~detector[2];
+        isCross   = 1;
         needLeft  = 0;
         needRight = 0;
         needBack  = 0;
       end
       4'b0X10:            //right & front
         begin
-        isCross   = ~detector[2];
+        isCross   = 1;
         needLeft  = 0;
         needRight = 1;
         needBack  = 0;
@@ -255,7 +254,7 @@ module auto_module (
                 turnLeft = 0;
                 turnRight = 0;
               end else begin
-                if (isCross) begin  // 非路口直接转向 Turn directly if not Cross
+                if (isCross) begin  // 路口给走的方向放信标  Place the barrier after turn
                   needBarrier = 1;
                   if (needLeft) begin
                     turn_cnt = turn_sec;
@@ -284,15 +283,9 @@ module auto_module (
                     init_counter = 1;
                     count = cross_cnt;
                   end else begin
-                    if (all_set) begin
-                      // destroyBarrier = 1;
-                      buffer  = buffer_sec;
-                      counter = counter >> 1;
-                    end
+
                   end
-                end else begin  // 路口给走的方向放信标 Turn after place the barrier
-
-
+                end else begin  // 非路口直接转向 Turn directly if not Cross
                   if (needLeft) begin
                     turn_cnt = turn_sec;
                     auto_state = auto_turn_left;
@@ -369,6 +362,12 @@ module auto_module (
               turnRight = 0;
               auto_state = auto_turn_right;
             end else begin
+              if (all_set) begin
+                destroyBarrier = 1;
+                buffer = buffer_sec;
+                counter = counter >> 1;
+                get_back = 1;
+              end
               forward_cnt = forward_sec;
               auto_state  = auto_forward;
             end
@@ -376,7 +375,6 @@ module auto_module (
         end
         default: begin
           auto_state = auto_state;
-          placeB_cnt = placeB_cnt;
           turn_cnt = turn_cnt;
           moveForward = moveForward;
           moveBack = moveBack;
@@ -385,8 +383,8 @@ module auto_module (
         end
       endcase
       if (buffer > 0) begin
-        // placeBarrier   = placeBarrier;
-        // destroyBarrier = destroyBarrier;
+        placeBarrier = placeBarrier;
+        destroyBarrier = destroyBarrier;
         buffer = buffer - 1;
       end else begin
         placeBarrier   = 0;

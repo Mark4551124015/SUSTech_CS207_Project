@@ -28,7 +28,7 @@ module lighting_module (
     input clk,  // 100MHz system clock
     input [4:0] state,  // Car state
     input [3:0] switch_total,  // Total switch inputs 
-    input [4:0] button_total,  // Total button inputs 
+    input [5:0] button_total,  // Total button inputs 
     output power_state,  // Power state light
     output [1:0] driving_mode,  // Driving mode lights
     output [1:0] car_state,  // Car state lights

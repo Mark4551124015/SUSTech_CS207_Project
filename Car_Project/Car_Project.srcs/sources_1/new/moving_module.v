@@ -28,9 +28,9 @@ module moving_module (
     input clk,  // 100MHz system clock
     input [4:0] state,  // Car state
     input [3:0] switch_total,  // Total switch inputs
-    input [4:0] button_total,  // Total button inputs
+    input [5:0] button_total,  // Total button inputs
     input [3:0] auto_move,  // Move signal outputs in automatic mode
-    input [31:0] cool,  // Driving signal in semi-automatic mode
+    input stay,  // Driving signal in semi-automatic mode
     output reg move_forward_signal,  // Move forward signal
     output reg move_backward_signal,  // Move backward signal
     output reg turn_left_signal,  // Turn left signal
@@ -98,7 +98,7 @@ module moving_module (
 
 
       semi_moving_forward: begin
-        if (cool == 0) begin
+        if (~stay) begin
           move_forward_signal  = 1;
           move_backward_signal = 0;
           turn_left_signal     = 0;
@@ -111,7 +111,7 @@ module moving_module (
         end
       end
       semi_turning_left: begin
-        if (cool == 0) begin
+        if (~stay) begin
           move_forward_signal  = 0;
           move_backward_signal = 0;
           turn_left_signal     = 1;
@@ -124,7 +124,7 @@ module moving_module (
         end
       end
       semi_turning_right: begin
-        if (cool == 0) begin
+        if (~stay) begin
           move_forward_signal  = 0;
           move_backward_signal = 0;
           turn_left_signal     = 0;
