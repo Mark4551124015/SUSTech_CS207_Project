@@ -33,12 +33,12 @@ module auto_module (
   reg moveBack;
   reg turnRight;
   reg turnLeft;
-  assign auto_move = {moveForward, moveBack, turnLeft, turnRight};  //debugè¾“å‡ºautoå§¿æ€
+  assign auto_move = {moveForward, moveBack, turnLeft, turnRight};  //debugÊä³öauto×ËÌ¬
   reg [51:0] time_limit;
-  reg [31:0] turn_cnt;  //è½¬å¼¯æ—¶é—´
+  reg [31:0] turn_cnt;  //×ªÍäÊ±¼ä
   reg [8:0] counter = 1;
 
-  //æ£€æµ‹æœ‰æ— å¢™
+  //¼ì²âÓĞÎŞÇ½
   wire front_d = detector[3];
   wire back_d = detector[2];
   wire left_d = detector[1];
@@ -65,12 +65,12 @@ module auto_module (
     auto_turn_back = 5'b00100,
     auto_placeB = 5'b00101,
     auto = 5'b111XX,
-    turn_sec = 32'd85_000_000, //è½¬90åº¦æ—¶é—´
-  turn_back_sec = 32'd180_000_000,  //è½¬180åº¦æ—¶é—´
-  forward_sec = 32'd90_000_000,  //å‰è¿›èµ°å‡ºè·¯å£æ—¶é—´
-  cool_sec = 32'd20_000_000,  //å®Œæˆè½¬å‘åå›æ­£æ—¶é—´
-  rest_sec = 32'd6_000_000,  //detectorå»¶è¿Ÿ
-  buffer_sec = 32'd2_100_000;  //æ”¾è·¯æ ‡æ‰€éœ€æŒç»­æ—¶é—´
+    turn_sec = 32'd85_000_000, //×ª90¶ÈÊ±¼ä
+  turn_back_sec = 32'd180_000_000,  //×ª180¶ÈÊ±¼ä
+  forward_sec = 32'd90_000_000,  //Ç°½ø×ß³öÂ·¿ÚÊ±¼ä
+  cool_sec = 32'd20_000_000,  //Íê³É×ªÏòºó»ØÕıÊ±¼ä
+  rest_sec = 32'd6_000_000,  //detectorÑÓ³Ù
+  buffer_sec = 32'd2_100_000;  //·ÅÂ·±êËùĞè³ÖĞøÊ±¼ä
 
   reg [4:0] auto_state;
   reg [5:0] lastState;
@@ -254,7 +254,7 @@ module auto_module (
                 turnLeft = 0;
                 turnRight = 0;
               end else begin
-                if (isCross) begin  // è·¯å£ç»™èµ°çš„æ–¹å‘æ”¾ä¿¡æ ‡  Place the barrier after turn
+                if (isCross) begin  // Â·¿Ú¸ø×ßµÄ·½Ïò·ÅĞÅ±ê  Place the barrier after turn
                   needBarrier = 1;
                   if (needLeft) begin
                     turn_cnt = turn_sec;
@@ -285,7 +285,7 @@ module auto_module (
                   end else begin
 
                   end
-                end else begin  // éè·¯å£ç›´æ¥è½¬å‘ Turn directly if not Cross
+                end else begin  // ·ÇÂ·¿ÚÖ±½Ó×ªÏò Turn directly if not Cross
                   if (needLeft) begin
                     turn_cnt = turn_sec;
                     auto_state = auto_turn_left;

@@ -50,23 +50,23 @@ module state_machine (
   wire mode_click;
   parameter
   rest_state = 5'b00000,
-  power_off = 5'b0XXXX,   //å…³æœºçŠ¶æ€ è¯¥çŠ¶æ€ä¸‹é™¤æ£€æµ‹åˆ°çš„ç”µæºæŒ‰é’®è¾“å…¥å¤–çš„æ‰€æœ‰æ£€æµ‹åˆ°çš„è¾“å…¥æ— æ•ˆ
+  power_off = 5'b0XXXX,   //¹Ø»ú×´Ì¬ ¸Ã×´Ì¬ÏÂ³ı¼ì²âµ½µÄµçÔ´°´Å¥ÊäÈëÍâµÄËùÓĞ¼ì²âµ½µÄÊäÈëÎŞĞ§
   manual = 5'b110XX,
-        manual_non_starting = 5'b11001,   //å¼€æœºé»˜è®¤æ¨¡å¼ æ‰‹åŠ¨é©¾é©¶æ¨¡å¼æœªå¯åŠ¨çŠ¶æ€ä¸ºé»˜è®¤çŠ¶æ€ å¼€æœº&æ‰‹åŠ¨&non-starting
-  manual_starting = 5'b11010,  //å¼€æœº&æ‰‹åŠ¨&starting
-  manual_moving = 5'b11011,  //å¼€æœº&æ‰‹åŠ¨&moving
-  semi = 5'b101XX, semi_waiting = 5'b10100,  //å¼€æœº åŠè‡ªåŠ¨waiting
-  semi_turning_left = 5'b10101,  //å¼€æœº åŠè‡ªåŠ¨å·¦è½¬
-  semi_turning_right = 5'b10110,  //å¼€æœº åŠè‡ªåŠ¨å³è½¬
-  semi_moving_forward = 5'b10111,  //å¼€æœº åŠè‡ªåŠ¨ç›´è¡Œ
+        manual_non_starting = 5'b11001,   //¿ª»úÄ¬ÈÏÄ£Ê½ ÊÖ¶¯¼İÊ»Ä£Ê½Î´Æô¶¯×´Ì¬ÎªÄ¬ÈÏ×´Ì¬ ¿ª»ú&ÊÖ¶¯&non-starting
+  manual_starting = 5'b11010,  //¿ª»ú&ÊÖ¶¯&starting
+  manual_moving = 5'b11011,  //¿ª»ú&ÊÖ¶¯&moving
+  semi = 5'b101XX, semi_waiting = 5'b10100,  //¿ª»ú °ë×Ô¶¯waiting
+  semi_turning_left = 5'b10101,  //¿ª»ú °ë×Ô¶¯×ó×ª
+  semi_turning_right = 5'b10110,  //¿ª»ú °ë×Ô¶¯ÓÒ×ª
+  semi_moving_forward = 5'b10111,  //¿ª»ú °ë×Ô¶¯Ö±ĞĞ
   auto = 5'b111XX, auto_init = 5'b11100,
 
   //time count
-  start_sec = 32'd100_000_000, turn_sec = 32'd85_000_000,  //è½¬90åº¦æ—¶é—´
-  turn_back_sec = 32'd180_000_000,  //è½¬180åº¦æ—¶é—´
-  forward_sec = 32'd80_000_000,  //å‰è¿›èµ°å‡ºè·¯å£æ—¶é—´
-  cool_sec = 32'd20_000_000,  //å®Œæˆè½¬å‘åå›æ­£æ—¶é—´
-  rest_sec = 32'd6_000_000;  //detectorå»¶è¿Ÿ
+  start_sec = 32'd100_000_000, turn_sec = 32'd85_000_000,  //×ª90¶ÈÊ±¼ä
+  turn_back_sec = 32'd180_000_000,  //×ª180¶ÈÊ±¼ä
+  forward_sec = 32'd80_000_000,  //Ç°½ø×ß³öÂ·¿ÚÊ±¼ä
+  cool_sec = 32'd20_000_000,  //Íê³É×ªÏòºó»ØÕıÊ±¼ä
+  rest_sec = 32'd6_000_000;  //detectorÑÓ³Ù
 
   assign clutch = switch_total[3];
   assign throttle = switch_total[2];
@@ -74,41 +74,6 @@ module state_machine (
   assign reverse = switch_total[0];
   reg isCross, needLeft, needRight, needBack;
 
-  always @(posedge clk) begin
-    casex (detector)
-      4'b0X00, 4'b0X10, 4'b0X01, 4'b1X00: begin
-        isCross   = 1;
-        needLeft  = 0;
-        needRight = 0;
-        needBack  = 0;
-      end
-      4'b1X01: begin
-        isCross   = 0;
-        needLeft  = 1;
-        needRight = 0;
-        needBack  = 0;
-
-      end
-      4'b1X10: begin
-        isCross   = 0;
-        needLeft  = 0;
-        needRight = 1;
-        needBack  = 0;
-      end
-      4'b1011: begin
-        isCross   = 0;
-        needLeft  = 0;
-        needRight = 0;
-        needBack  = 1;
-      end
-      default: begin
-        isCross   = 0;
-        needLeft  = 0;
-        needRight = 0;
-        needBack  = 0;
-      end
-    endcase
-  end
   click_detector on_power_off_click (
       .clk(clk),
       .button(button_total[3]),
@@ -140,6 +105,42 @@ module state_machine (
       .button_click(back_click)
   );
   assign power = button_total[4];
+  
+    always @(posedge clk) begin
+      casex (detector)
+        4'b0X00, 4'b0X10, 4'b0X01, 4'b1X00: begin
+          isCross   = 1;
+          needLeft  = 0;
+          needRight = 0;
+          needBack  = 0;
+        end
+        4'b1X01: begin
+          isCross   = 0;
+          needLeft  = 1;
+          needRight = 0;
+          needBack  = 0;
+    
+        end
+        4'b1X10: begin
+          isCross   = 0;
+          needLeft  = 0;
+          needRight = 1;
+          needBack  = 0;
+        end
+        4'b1011: begin
+          isCross   = 0;
+          needLeft  = 0;
+          needRight = 0;
+          needBack  = 1;
+        end
+        default: begin
+          isCross   = 0;
+          needLeft  = 0;
+          needRight = 0;
+          needBack  = 0;
+        end
+      endcase
+    end
   always @(posedge clk) begin
     if (power_off_click) begin
       state = rest_state;
@@ -312,7 +313,7 @@ module state_machine (
           init  = init;
           state = state;
         end
-      endcase  //å…¶ä»–æƒ…å†µä¸å˜
+      endcase  //ÆäËûÇé¿ö²»±ä
     end
   end
 endmodule

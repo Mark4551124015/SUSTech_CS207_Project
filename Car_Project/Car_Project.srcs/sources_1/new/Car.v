@@ -30,7 +30,7 @@ module car (
     input front_button,  // Move front button
     input left_button,  // Turn left button
     input right_button,  // Turn right button
-    input back_button,  // Turn right button
+    input back_button,  // Move back button
     input mode,
     // Switch
     input clutch,  // Clutch switch

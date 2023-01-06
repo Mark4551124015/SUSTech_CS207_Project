@@ -430,14 +430,14 @@ module vga_module (
       .col6(mile[48])
   );
 
-  //è¡Œè®¡æ•°å™¨å¯¹åƒç´ æ—¶é’Ÿè®¡æ•°
+  //ĞĞ¼ÆÊıÆ÷¶ÔÏñËØÊ±ÖÓ¼ÆÊı
   always @(posedge vga_clk) begin
     if (hcount_ov) hcount <= 10'd0;
     else hcount <= hcount + 10'd1;
   end
   assign hcount_ov = (hcount == HPIXEKL_END);
 
-  //åœºè®¡æ•°å™¨å¯¹è¡Œè®¡æ•°
+  //³¡¼ÆÊıÆ÷¶ÔĞĞ¼ÆÊı
   always @(posedge vga_clk) begin
     if (hcount_ov) begin
       if (vcount_ov) vcount <= 10'd0;
@@ -446,7 +446,7 @@ module vga_module (
   end
   assign vcount_ov = (vcount == VLINE_END);
 
-  //VGAè¡ŒåœºåŒæ­¥ä¿¡å·
+  //VGAĞĞ³¡Í¬²½ĞÅºÅ
   assign dat_act = ((hcount >= HDAT_BEGIN) && (hcount <= HDAT_END)) && ((vcount >= VDAT_BEGIN) && (vcount <= VDAT_END));
   assign hsync = (hcount > HSYNC_END);
   assign vsync = (vcount > VSYNC_END);
@@ -455,7 +455,7 @@ module vga_module (
   integer i;
   integer j;
 
-  // è®¾ç½®æ˜¾ç¤ºä¿¡å·ï¿½?????
+  // ÉèÖÃÏÔÊ¾ĞÅºÅ
   always @(posedge vga_clk) begin
     for (i = 0; i < 336; i = i + 1) begin
       for (j = 0; j < 64; j = j + 1) begin
