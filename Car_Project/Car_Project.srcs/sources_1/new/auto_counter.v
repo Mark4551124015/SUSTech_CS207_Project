@@ -21,11 +21,11 @@
 
 
 module auto_counter (
-    input init,
-    input clk,
-    input [1:0] init_cnt,
-    input count_down,
-    output reg all_set
+    input init, // Initialization signal
+    input clk, // 100MHz system clock
+    input [1:0] init_cnt, // Initial value
+    input count_down, // Count down signal
+    output reg all_set // Finish count signal
 );
 
   reg lastCD;
