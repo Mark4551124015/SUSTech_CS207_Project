@@ -64,3 +64,7 @@ xvlog.*
 ## checkpoint files
 *.dcp
 *.DS_Store
+Car_Project/.DS_Store
+Car_Project/Car_Project.srcs/.DS_Store
+Car_Project/Car_Project.srcs/constrs_1/.DS_Store
+Car_Project/Car_Project.srcs/sources_1/.DS_Store
